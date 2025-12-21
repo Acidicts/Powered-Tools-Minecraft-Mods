@@ -1,0 +1,6 @@
+{
+  "item.powered_tools.powered_pickaxe": "Powered Pickaxe",
+  "item.powered_tools.battery_tier_0": "Stone Battery",
+  "item.powered_tools.battery_tier_1": "Iron Battery",
+  "block.powered_tools.charger": "Charger"
+}

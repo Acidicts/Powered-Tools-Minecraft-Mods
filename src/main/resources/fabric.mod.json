@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "powered_tools",
+  "version": "${version}",
+  "name": "powered_tools",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "net.acidicts.powered_tools.Powered_toolsDataGenerator"
+    ],
+    "client": [
+      "net.acidicts.powered_tools.Powered_toolsClient"
+    ],
+    "main": [
+      "net.acidicts.powered_tools.Powered_tools"
+    ]
+  },
+  "mixins": [
+    "powered_tools.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
