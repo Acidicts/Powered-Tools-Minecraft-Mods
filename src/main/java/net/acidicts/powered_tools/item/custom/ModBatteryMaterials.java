@@ -10,7 +10,11 @@ import java.util.function.Supplier;
 
 public enum ModBatteryMaterials implements BatteryMaterial {
     Stone(100, 25, "Stone", 5, 0.04f),
-    Iron(500, 50, "Iron", 25, 0.02f);
+    Iron(500, 50, "Iron", 25, 0.02f),
+    Gold(1000, 100, "Gold", 50, 0.015f),
+    Diamond(5000, 250, "Diamond", 200, 0.01f),
+    Netherite(10000, 500, "Netherite", 500, 0.005f),
+    Diamond_Gold(20000, 1000, "Diamond_Gold", 1000, 0.002f);
 
     private final int capacity;
     private final int transferRate;

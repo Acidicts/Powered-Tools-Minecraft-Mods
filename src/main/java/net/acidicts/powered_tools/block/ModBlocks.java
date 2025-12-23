@@ -18,6 +18,7 @@ public class ModBlocks {
     public static final Block CHARGER = registerBlock("charger",
             new Charger(AbstractBlock.Settings.create().nonOpaque().requiresTool().strength(4f).resistance(12f)));
 
+
     private static Block registerBlock(String name, Block block) {
         registerBlockItem(name, block);
         Block registeredBlock = Registry.register(Registries.BLOCK, Identifier.of(Powered_tools.MOD_ID, name), block);

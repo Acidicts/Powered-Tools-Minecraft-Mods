@@ -3,6 +3,7 @@ package net.acidicts.powered_tools.item;
 
 import net.acidicts.powered_tools.Powered_tools;
 import net.acidicts.powered_tools.item.custom.BatteryItem;
+import net.acidicts.powered_tools.item.custom.BrokenBatteryItem;
 import net.acidicts.powered_tools.item.custom.ModBatteryMaterials;
 import net.acidicts.powered_tools.item.custom.Powered_Pickaxe;
 import net.minecraft.item.*;
@@ -14,10 +15,33 @@ import net.minecraft.util.Identifier;
 public class ModItems {
     public static final Item POWERED_PICKAXE = registerItem("powered_pickaxe",
             new Powered_Pickaxe(ModToolMaterials.PoweredTool, new Item.Settings()));
-    public static final Item BATTERY_TIER_0 = registerItem("battery_tier_0",
+
+    public static final Item BATTERY_TIER_0 = registerItem("battery_0",
             new BatteryItem(ModBatteryMaterials.Stone, new Item.Settings()));
-    public static final Item BATTERY_TIER_1 = registerItem("battery_tier_1",
+    public static final Item BATTERY_TIER_1 = registerItem("battery_1",
             new BatteryItem(ModBatteryMaterials.Iron, new Item.Settings()));
+    public static final Item BATTERY_TIER_2 = registerItem("battery_2",
+            new BatteryItem(ModBatteryMaterials.Gold, new Item.Settings()));
+    public static final Item BATTERY_TIER_3 = registerItem("battery_3",
+            new BatteryItem(ModBatteryMaterials.Diamond, new Item.Settings()));
+    public static final Item BATTERY_TIER_4 = registerItem("battery_4",
+            new BatteryItem(ModBatteryMaterials.Netherite, new Item.Settings()));
+    public static final Item BATTERY_TIER_5 = registerItem("battery_5",
+            new BatteryItem(ModBatteryMaterials.Diamond_Gold, new Item.Settings()));
+
+
+    public static final Item BROKEN_BATTERY_TIER_0 = registerItem("broken_battery_0",
+            new BrokenBatteryItem(ModBatteryMaterials.Stone, new Item.Settings()));
+    public static final Item BROKEN_BATTER_TIER_1 = registerItem("broken_battery_1",
+            new BrokenBatteryItem(ModBatteryMaterials.Iron, new Item.Settings()));
+    public static final Item BROKEN_BATTERY_TIER_2 = registerItem("broken_battery_2",
+            new BrokenBatteryItem(ModBatteryMaterials.Gold, new Item.Settings()));
+    public static final Item BROKEN_BATTERY_TIER_3 = registerItem("broken_battery_3",
+            new BrokenBatteryItem(ModBatteryMaterials.Diamond, new Item.Settings()));
+    public static final Item BROKEN_BATTERY_TIER_4 = registerItem("broken_battery_4",
+            new BrokenBatteryItem(ModBatteryMaterials.Netherite, new Item.Settings()));
+    public static final Item BROKEN_BATTERY_TIER_5 = registerItem("broken_battery_5",
+            new BrokenBatteryItem(ModBatteryMaterials.Diamond_Gold, new Item.Settings()));
 
     private static Item registerItem(String name, Item item) {
         Item registeredItem = Registry.register(Registries.ITEM, Identifier.of(Powered_tools.MOD_ID, name), item);
@@ -44,6 +68,18 @@ public class ModItems {
                     .append(word.substring(1));
         }
         return formatted.toString();
+    }
+
+    public static Item getBrokenBatteryByTier(String tier) {
+        return switch (tier) {
+            case "Stone" -> BROKEN_BATTERY_TIER_0;
+            case "Iron" -> BROKEN_BATTER_TIER_1;
+            case "Gold" -> BROKEN_BATTERY_TIER_2;
+            case "Diamond" -> BROKEN_BATTERY_TIER_3;
+            case "Netherite" -> BROKEN_BATTERY_TIER_4;
+            case "Diamond_Gold" -> BROKEN_BATTERY_TIER_5;
+            default -> BROKEN_BATTERY_TIER_0;
+        };
     }
 
     public static void registerItems() {

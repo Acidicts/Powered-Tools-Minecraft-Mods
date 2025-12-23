@@ -1,5 +1,6 @@
 package net.acidicts.powered_tools.item.custom;
 
+import net.acidicts.powered_tools.item.ModItems;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.Item;
@@ -9,6 +10,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 import java.util.List;
+import java.util.Map;
 
 public class BatteryItem extends Item {
     public final BatteryMaterial material;
@@ -18,8 +20,17 @@ public class BatteryItem extends Item {
     public final float decay_rate;
     public final String tier;
 
+    private final Map<String, Integer> tier_dict = Map.of(
+            "Stone", 0,
+            "Iron", 1,
+            "Gold", 2,
+            "Diamond", 3,
+            "Netherite", 4,
+            "Diamond_Gold", 5
+    );
+
     public BatteryItem(BatteryMaterial material, Settings settings) {
-        super(settings.maxCount(1)); // Prevent stacking
+        super(settings.maxCount(1));
 
         this.material = material;
         this.max_capacity = material.getCapacity();
@@ -27,6 +38,14 @@ public class BatteryItem extends Item {
         this.lifespan = material.getLifespan();
         this.decay_rate = material.getDecayRate();
         this.tier = material.getTier();
+    }
+
+    public int getTierInt() {
+        return tier_dict.getOrDefault(this.tier, 0);
+    }
+
+    public boolean isBroken(ItemStack stack) {
+        return getCycles(stack) >= this.lifespan;
     }
 
     private void initializeData(ItemStack stack) {

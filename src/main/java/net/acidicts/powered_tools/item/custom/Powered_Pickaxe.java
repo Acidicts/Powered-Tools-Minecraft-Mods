@@ -77,7 +77,7 @@ public class Powered_Pickaxe extends PickaxeItem {
     public void setEnergy(ItemStack stack, int energy) {
         NbtCompound nbt = getBatteryData(stack);
         if (!nbt.getBoolean("battery_installed")) {
-            return; // Can't set energy without a battery
+            return;
         }
         int maxCapacity = getMaxCapacity(stack);
         energy = Math.max(0, Math.min(energy, maxCapacity));
@@ -107,7 +107,6 @@ public class Powered_Pickaxe extends PickaxeItem {
                 if (nbt.getBoolean("battery_installed")) {
                     ItemStack extractedBattery = extractBatteryAsItem(pickaxeStack);
 
-                    // Completely clear all battery data from pickaxe
                     NbtCompound pickaxeNbt = new NbtCompound();
                     pickaxeNbt.putBoolean("battery_installed", false);
                     pickaxeNbt.putString("battery_tier", "");
@@ -153,6 +152,8 @@ public class Powered_Pickaxe extends PickaxeItem {
                 user.sendMessage(Text.literal("Battery swapped!").formatted(Formatting.GREEN), true);
             }
             return TypedActionResult.success(pickaxeStack, world.isClient());
+        } else if (offhandStack.getItem() instanceof BrokenBatteryItem) {
+            user.sendMessage(Text.of("Your battery is broken and cannot be used."), true);
         }
 
         return TypedActionResult.pass(pickaxeStack);
@@ -179,8 +180,11 @@ public class Powered_Pickaxe extends PickaxeItem {
     }
     private Item getBatteryItemByTier(String tier) {
         return switch (tier.toLowerCase()) {
-            case "stone" -> net.acidicts.powered_tools.item.ModItems.BATTERY_TIER_0;
             case "iron" -> net.acidicts.powered_tools.item.ModItems.BATTERY_TIER_1;
+            case "gold" -> net.acidicts.powered_tools.item.ModItems.BATTERY_TIER_2;
+            case "diamond" -> net.acidicts.powered_tools.item.ModItems.BATTERY_TIER_3;
+            case "netherite" -> net.acidicts.powered_tools.item.ModItems.BATTERY_TIER_4;
+            case "diamond_gold" -> net.acidicts.powered_tools.item.ModItems.BATTERY_TIER_5;
             default -> net.acidicts.powered_tools.item.ModItems.BATTERY_TIER_0;
         };
     }

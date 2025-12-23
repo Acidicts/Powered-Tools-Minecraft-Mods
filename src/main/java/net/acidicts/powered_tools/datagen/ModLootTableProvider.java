@@ -1,5 +1,6 @@
 package net.acidicts.powered_tools.datagen;
 
+import net.acidicts.powered_tools.block.ModBlocks;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 import net.minecraft.registry.RegistryWrapper;
@@ -13,6 +14,6 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
 
     @Override
     public void generate() {
-
+        addDrop(ModBlocks.CHARGER);
     }
 }
