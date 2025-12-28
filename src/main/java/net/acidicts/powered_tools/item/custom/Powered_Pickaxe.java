@@ -9,7 +9,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PickaxeItem;
-import net.minecraft.item.ToolMaterial;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
@@ -25,7 +24,7 @@ public class Powered_Pickaxe extends PickaxeItem {
 
     private static final int ENERGY_PER_USE = 10;
 
-    public Powered_Pickaxe(ToolMaterial material, Settings settings) {
+    public Powered_Pickaxe(Settings settings) {
         super(ModToolMaterials.PoweredTool, settings.maxCount(1));
     }
 
@@ -101,6 +100,8 @@ public class Powered_Pickaxe extends PickaxeItem {
         ItemStack pickaxeStack = user.getStackInHand(hand);
         ItemStack offhandStack = user.getOffHandStack();
 
+
+
         if (user.isSneaking()) {
             if (!world.isClient) {
                 NbtCompound nbt = getBatteryData(pickaxeStack);
@@ -172,9 +173,6 @@ public class Powered_Pickaxe extends PickaxeItem {
         batteryNbt.putInt("current_charge", pickaxeNbt.getInt("battery_charge"));
         batteryStack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(batteryNbt));
 
-        if (batteryStack.getItem() instanceof BatteryItem verifyBattery) {
-            int verifyCharge = verifyBattery.getCurrentCharge(batteryStack);
-        }
 
         return batteryStack;
     }
@@ -272,9 +270,57 @@ public class Powered_Pickaxe extends PickaxeItem {
         return getEnergy(stack) >= ENERGY_PER_USE && super.canMine(state, world, pos, miner);
     }
 
+    @SuppressWarnings("unused")
     public void addEnergy(ItemStack stack, int amount) {
         int currentEnergy = getEnergy(stack);
         setEnergy(stack, currentEnergy + amount);
+    }
+
+    public int cyclesLeft(ItemStack stack) {
+        NbtCompound nbt = getBatteryData(stack);
+        int cycles = nbt.getInt("battery_cycles");
+        int lifespan = nbt.getInt("battery_lifespan");
+        return lifespan - cycles;
+    }
+
+    public void setCycles(ItemStack stack, int cycles){
+        NbtCompound nbt = getBatteryData(stack);
+        nbt.putInt("battery_cycles", cycles);
+        setBatteryData(stack, nbt);
+    }
+
+    public int getCycles(ItemStack stack){
+        NbtCompound nbt = getBatteryData(stack);
+        return nbt.getInt("battery_cycles");
+    }
+
+    private int getCurrentCharge(ItemStack stack){
+        NbtCompound nbt = getBatteryData(stack);
+        return nbt.getInt("battery_charge");
+    }
+
+    public void setCurrentCharge(ItemStack stack, int charge){
+        NbtCompound nbt = getBatteryData(stack);
+        nbt.putInt("battery_charge", charge);
+        setBatteryData(stack, nbt);
+    }
+
+    @SuppressWarnings("unused")
+    public void recharge(ItemStack stack, int amount) {
+        int currentCharge = getCurrentCharge(stack);
+        int maxCapacity = getMaxCapacity(stack);
+        int newCharge = Math.min(maxCapacity, currentCharge + amount);
+
+        if (cyclesLeft(stack) > 0) {
+            int currentEnergy = getEnergy(stack);
+            setEnergy(stack, currentEnergy + amount);
+
+            setCycles(stack, getCycles(stack)+ 1);
+            int newMaxCapacity = getMaxCapacity(stack);
+            if (newCharge > newMaxCapacity) {
+                setCurrentCharge(stack, newMaxCapacity);
+            }
+        }
     }
 
     @Override
@@ -294,7 +340,7 @@ public class Powered_Pickaxe extends PickaxeItem {
                     .formatted(energy > maxCapacity * 0.5 ? Formatting.GREEN :
                             energy > maxCapacity * 0.25 ? Formatting.YELLOW : Formatting.RED));
             tooltip.add(Text.literal("Battery Tier: " + tier).formatted(Formatting.GOLD));
-            tooltip.add(Text.literal("Battery Cycles: " + remainingCycles).formatted(
+            tooltip.add(Text.literal("Remaining Battery Cycles: " + remainingCycles).formatted(
                     remainingCycles > lifespan * 0.5 ? Formatting.GREEN :
                             remainingCycles > lifespan * 0.25 ? Formatting.YELLOW : Formatting.RED
             ));

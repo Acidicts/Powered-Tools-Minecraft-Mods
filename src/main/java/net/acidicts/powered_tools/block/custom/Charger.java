@@ -4,6 +4,8 @@ import com.mojang.serialization.MapCodec;
 import net.acidicts.powered_tools.block.entity.ChargerBlockEntity;
 import net.acidicts.powered_tools.item.ModItems;
 import net.acidicts.powered_tools.item.custom.BatteryItem;
+import net.acidicts.powered_tools.item.custom.Powered_Pickaxe;
+import net.acidicts.powered_tools.tags.ModTags;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
@@ -90,25 +92,50 @@ public class Charger extends BlockWithEntity {
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if (!world.isClient && player.getMainHandStack().getItem() instanceof BatteryItem batteryItem) {
-            var stack = player.getMainHandStack();
-
-            int maxCapacity = batteryItem.getMaxCapacity(stack);
-            int currentCharge = batteryItem.getCurrentCharge(stack);
-            int rechargeAmount = maxCapacity - currentCharge;
-
-            if (batteryItem.isBroken(stack)) {
-                int slot = player.getInventory().getSlotWithStack(stack);
-                player.getInventory().removeStack(slot);
-                Item brokenBattery = ModItems.getBrokenBatteryByTier(batteryItem.tier);
-                player.getInventory().insertStack(brokenBattery.getDefaultStack());
-            }
-
-            if (rechargeAmount > 0) {
-                batteryItem.recharge(stack, rechargeAmount);
-                return ActionResult.SUCCESS;
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (blockEntity instanceof ChargerBlockEntity) {
+            if (!((ChargerBlockEntity) blockEntity).hasSpaceToOpen()) {
+                return ActionResult.FAIL;
             }
         }
+        if (!world.isClient && player.getMainHandStack().isIn(ModTags.Items.chargeable)) {
+            var stack = player.getMainHandStack();
+
+            if (stack.getItem() instanceof Powered_Pickaxe poweredPickaxe) {
+                int maxCapacity = poweredPickaxe.getMaxCapacity(stack);
+                int currentCharge = poweredPickaxe.getEnergy(stack);
+                int rechargeAmount = maxCapacity - currentCharge;
+
+                if (rechargeAmount > 0) {
+                    poweredPickaxe.setCycles(stack, poweredPickaxe.getCycles(stack) + 1);
+                    poweredPickaxe.setEnergy(stack, maxCapacity);
+                    player.sendMessage(net.minecraft.text.Text.literal("Pickaxe charged!").formatted(net.minecraft.util.Formatting.GREEN), true);
+                    return ActionResult.SUCCESS;
+                } else {
+                    player.sendMessage(net.minecraft.text.Text.literal("Pickaxe is already fully charged!").formatted(net.minecraft.util.Formatting.YELLOW), true);
+                    return ActionResult.SUCCESS;
+                }
+            }
+            // Check if it's a BatteryItem
+            else if (stack.getItem() instanceof BatteryItem batteryItem) {
+                int maxCapacity = batteryItem.getMaxCapacity(stack);
+                int currentCharge = batteryItem.getCurrentCharge(stack);
+                int rechargeAmount = maxCapacity - currentCharge;
+
+                if (batteryItem.isBroken(stack)) {
+                    int slot = player.getInventory().getSlotWithStack(stack);
+                    player.getInventory().removeStack(slot);
+                    Item brokenBattery = ModItems.getBrokenBatteryByTier(batteryItem.tier);
+                    player.getInventory().insertStack(brokenBattery.getDefaultStack());
+                }
+
+                if (rechargeAmount > 0) {
+                    batteryItem.recharge(stack, rechargeAmount);
+                    return ActionResult.SUCCESS;
+                }
+            }
+        }
+
 
         return ActionResult.PASS;
     }

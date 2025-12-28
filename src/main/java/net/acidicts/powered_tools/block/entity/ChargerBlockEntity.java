@@ -26,7 +26,7 @@ public class ChargerBlockEntity extends BlockEntity implements GeoBlockEntity {
         controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
     }
 
-    private boolean hasSpaceToOpen() {
+    public boolean hasSpaceToOpen() {
         if (world == null) return false;
 
         // Check all horizontal directions around the charger
