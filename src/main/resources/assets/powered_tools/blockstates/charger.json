@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "powered_tools:block/charger",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "powered_tools:block/charger"
+    },
+    "facing=south": {
+      "model": "powered_tools:block/charger",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "powered_tools:block/charger",
+      "y": 270
+    }
+  }
+}
+
