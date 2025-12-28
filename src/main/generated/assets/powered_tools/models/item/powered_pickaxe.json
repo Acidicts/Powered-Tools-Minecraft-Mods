@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "powered_tools:item/powered_pickaxe"
+  }
+}

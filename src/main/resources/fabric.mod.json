@@ -24,6 +24,7 @@
     "powered_tools.mixins.json"
   ],
   "depends": {
+    "geckolib": ">=4.7.0",
     "fabricloader": ">=${loader_version}",
     "fabric-api": "*",
     "minecraft": "${minecraft_version}"

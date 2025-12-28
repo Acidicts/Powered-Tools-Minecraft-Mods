@@ -2,6 +2,8 @@ package net.acidicts.powered_tools.item;
 
 import com.google.common.base.Suppliers;
 import net.minecraft.block.Block;
+import net.minecraft.item.ItemConvertible;
+import net.minecraft.item.Items;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.tag.BlockTags;

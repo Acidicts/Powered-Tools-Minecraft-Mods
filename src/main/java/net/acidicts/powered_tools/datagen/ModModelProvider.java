@@ -1,5 +1,6 @@
 package net.acidicts.powered_tools.datagen;
 
+import net.acidicts.powered_tools.block.ModBlocks;
 import net.acidicts.powered_tools.item.ModItems;
 import net.acidicts.powered_tools.item.custom.BatteryItem;
 import net.acidicts.powered_tools.item.custom.BrokenBatteryItem;
@@ -35,11 +36,12 @@ public class ModModelProvider extends FabricModelProvider {
 
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
+
     }
 
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
-        itemModelGenerator.register(ModItems.POWERED_PICKAXE, Models.GENERATED);
+        itemModelGenerator.register(ModItems.POWERED_PICKAXE, Models.HANDHELD);
 
         for (BatteryItem battery : batteryItems) {
             itemModelGenerator.register(battery, Models.GENERATED);
