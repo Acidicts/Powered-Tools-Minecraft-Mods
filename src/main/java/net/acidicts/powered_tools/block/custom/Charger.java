@@ -17,6 +17,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
@@ -104,7 +105,8 @@ public class Charger extends BlockWithEntity {
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof ChargerBlockEntity) {
-            if (!((ChargerBlockEntity) blockEntity).hasSpaceToOpen()) {
+            if (!((ChargerBlockEntity) blockEntity).hasSpaceToOpen() && !((ChargerBlockEntity) blockEntity).hasOpened()) {
+                player.sendMessage(Text.literal("Place the Charger Without Blocks around it to open it!").formatted(net.minecraft.util.Formatting.RED), true);
                 return ActionResult.FAIL;
             }
         }
