@@ -14,5 +14,11 @@
   "item.powered_tools.broken_battery_4": "Broken Netherite Battery",
   "item.powered_tools.broken_battery_5": "Broken Diamond-Gold Battery",
 
-  "block.powered_tools.charger": "Charger"
+  "itemgroup.powered_tools.powered_tools_group": "Powered Tools",
+
+  "block.powered_tools.charger": "Charger",
+  "block.powered_tools.recycler": "Recycler",
+
+  "gui.powered_tools.recycler": "Recycler"
+
 }

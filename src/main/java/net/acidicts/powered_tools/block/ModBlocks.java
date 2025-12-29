@@ -2,6 +2,7 @@ package net.acidicts.powered_tools.block;
 
 import net.acidicts.powered_tools.Powered_tools;
 import net.acidicts.powered_tools.block.custom.Charger;
+import net.acidicts.powered_tools.block.custom.Recycler;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
@@ -16,7 +17,10 @@ import static net.acidicts.powered_tools.item.ModItems.formatRegistryName;
 public class ModBlocks {
 
     public static final Block CHARGER = registerBlock("charger",
-            new Charger(AbstractBlock.Settings.create().nonOpaque().requiresTool().strength(4f).resistance(12f)));
+            new Charger(AbstractBlock.Settings.create().nonOpaque().requiresTool().strength(2f).resistance(12f)));
+
+    public static final Block RECYCLER = registerBlock("recycler",
+            new Recycler(AbstractBlock.Settings.create().nonOpaque().requiresTool().strength(2f).resistance(12f)));
 
 
     private static Block registerBlock(String name, Block block) {

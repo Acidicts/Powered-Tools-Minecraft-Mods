@@ -2,6 +2,7 @@ package net.acidicts.powered_tools;
 
 import net.acidicts.powered_tools.block.ModBlocks;
 import net.acidicts.powered_tools.block.entity.ModBlockEntities;
+import net.acidicts.powered_tools.item.ModItemGroups;
 import net.acidicts.powered_tools.item.ModItems;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
@@ -18,8 +19,11 @@ public class Powered_tools implements ModInitializer {
         LOGGER.info("Initialising " + MOD_ID + " !");
         LOGGER.info(MOD_INFO);
 
+        ModItemGroups.registerItemGroups();
+
         ModItems.registerItems();
         ModBlocks.registerBlocks();
+
         ModBlockEntities.registerBlockEntities();
     }
 }

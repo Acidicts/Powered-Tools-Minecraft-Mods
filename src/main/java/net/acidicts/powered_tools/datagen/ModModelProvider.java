@@ -22,7 +22,7 @@ public class ModModelProvider extends FabricModelProvider {
     );
     public final List<BrokenBatteryItem> brokenBatteryItems = List.of(
             (BrokenBatteryItem) ModItems.BROKEN_BATTERY_TIER_0,
-            (BrokenBatteryItem) ModItems.BROKEN_BATTER_TIER_1,
+            (BrokenBatteryItem) ModItems.BROKEN_BATTERY_TIER_1,
             (BrokenBatteryItem) ModItems.BROKEN_BATTERY_TIER_2,
             (BrokenBatteryItem) ModItems.BROKEN_BATTERY_TIER_3,
             (BrokenBatteryItem) ModItems.BROKEN_BATTERY_TIER_4,

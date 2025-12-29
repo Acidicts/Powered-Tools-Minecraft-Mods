@@ -1,4 +1,4 @@
-package net.acidicts.powered_tools.block.entity.renderer;
+package net.acidicts.powered_tools.block.entity.renderer.charger;
 
 import net.acidicts.powered_tools.Powered_tools;
 import net.acidicts.powered_tools.block.entity.ChargerBlockEntity;

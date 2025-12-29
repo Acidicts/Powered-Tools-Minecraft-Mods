@@ -32,7 +32,7 @@ public class ModItems {
 
     public static final Item BROKEN_BATTERY_TIER_0 = registerItem("broken_battery_0",
             new BrokenBatteryItem(ModBatteryMaterials.Stone, new Item.Settings()));
-    public static final Item BROKEN_BATTER_TIER_1 = registerItem("broken_battery_1",
+    public static final Item BROKEN_BATTERY_TIER_1 = registerItem("broken_battery_1",
             new BrokenBatteryItem(ModBatteryMaterials.Iron, new Item.Settings()));
     public static final Item BROKEN_BATTERY_TIER_2 = registerItem("broken_battery_2",
             new BrokenBatteryItem(ModBatteryMaterials.Gold, new Item.Settings()));
@@ -73,7 +73,7 @@ public class ModItems {
     public static Item getBrokenBatteryByTier(String tier) {
         return switch (tier) {
             case "Stone" -> BROKEN_BATTERY_TIER_0;
-            case "Iron" -> BROKEN_BATTER_TIER_1;
+            case "Iron" -> BROKEN_BATTERY_TIER_1;
             case "Gold" -> BROKEN_BATTERY_TIER_2;
             case "Diamond" -> BROKEN_BATTERY_TIER_3;
             case "Netherite" -> BROKEN_BATTERY_TIER_4;

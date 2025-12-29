@@ -12,7 +12,14 @@ public class ModBlockEntities {
             Registry.register(
                     Registries.BLOCK_ENTITY_TYPE,
                     Identifier.of(Powered_tools.MOD_ID, "charger_block_entity"),
-                    BlockEntityType.Builder.create(ChargerBlockEntity::new, ModBlocks.CHARGER).build()
+                    BlockEntityType.Builder.create(ChargerBlockEntity::new, ModBlocks.CHARGER).build(null)
+            );
+
+    public static final BlockEntityType<RecyclerBlockEntity> RECYCLER_BLOCK_ENTITY =
+            Registry.register(
+                    Registries.BLOCK_ENTITY_TYPE,
+                    Identifier.of(Powered_tools.MOD_ID, "recycler_block_entity"),
+                    BlockEntityType.Builder.create(RecyclerBlockEntity::new, ModBlocks.RECYCLER).build(null)
             );
 
     public static void registerBlockEntities() {
