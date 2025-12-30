@@ -1,7 +1,9 @@
-// 1.21.1	2025-12-30T00:06:27.8792268	powered_tools/Model Definitions
+// 1.21.1	2025-12-30T15:16:14.7017803	powered_tools/Model Definitions
 47fee461afe47006d8d2eba347190aad65c25a48 assets\powered_tools\models\item\battery_1.json
 f36526ac9d7b9ce2ac011a9a4c059f1c83de030f assets\powered_tools\models\item\broken_battery_3.json
+b022d3a70587eccffc34c686099dfa3b630edf22 assets\powered_tools\blockstates\recycler.json
 b00d2a841107406954b2451110d16726b8f1b097 assets\powered_tools\models\item\broken_battery_0.json
+4b65fed9ca9a22d182d159a9088fd57cb5b68394 assets\powered_tools\models\item\recycler.json
 2305090722608a5177bedf5bc70a14a1cf9a8ff9 assets\powered_tools\models\item\powered_pickaxe.json
 10a811e2bc41f22a9e32a49a1ee67a415e00b769 assets\powered_tools\models\item\battery_4.json
 79f6e9e8b61c2efeb2b1e3d9563206538a6b2b67 assets\powered_tools\models\item\broken_battery_1.json

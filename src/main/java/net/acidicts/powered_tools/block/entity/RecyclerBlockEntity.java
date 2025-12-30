@@ -1,6 +1,9 @@
 package net.acidicts.powered_tools.block.entity;
 
-import net.acidicts.powered_tools.item.ModItems;
+import net.acidicts.powered_tools.block.custom.Recycler;
+import net.acidicts.powered_tools.recipe.ModRecipes;
+import net.acidicts.powered_tools.recipe.RecyclerRecipe;
+import net.acidicts.powered_tools.recipe.RecyclerRecipeInput;
 import net.acidicts.powered_tools.screen.custom.RecyclerScreenHandler;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
@@ -13,6 +16,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
@@ -22,6 +26,8 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory<BlockPos>, ImplementedInventory {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(4, ItemStack.EMPTY);
@@ -102,6 +108,7 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
     public void tick(World world, BlockPos pos, BlockState state) {
         if (hasRecipe() && canInsertIntoOutputSlot()) {
             increaseCraftingProgress();
+            world.setBlockState(pos, state.with(Recycler.LIT, true));
             markDirty(world, pos, state);
 
             if (hasCraftingFinished()) {
@@ -109,6 +116,7 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
                 resetProgress();
             }
         } else {
+            world.setBlockState(pos, state.with(Recycler.LIT, false));
             resetProgress();
             markDirty(world, pos, state);
         }
@@ -120,11 +128,15 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
     }
 
     private void craftItem() {
+        Optional<RecipeEntry<RecyclerRecipe>> recipe = getCurrentRecipe();
+
         this.removeStack(INPUT_SLOT, 1);
-        this.setStack(OUTPUT_SLOT, new ItemStack(ModItems.BATTERY_TIER_0, this.getStack(OUTPUT_SLOT).getCount() + 1));
+        this.setStack(OUTPUT_SLOT, new ItemStack(recipe.get().value().output().getItem(),
+                this.getStack(OUTPUT_SLOT).getCount() + recipe.get().value().getResult(null).getCount()));
     }
 
     private boolean hasCraftingFinished() {
+        Optional<RecipeEntry<RecyclerRecipe>> recipe = getCurrentRecipe();
         return this.progress >= this.maxProgress;
     }
 
@@ -138,11 +150,21 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
     }
 
     private boolean hasRecipe() {
-        ItemStack input = new ItemStack(ModItems.BROKEN_BATTERY_TIER_0);
-        ItemStack output = new ItemStack(ModItems.BATTERY_TIER_0, 1);
+        Optional<RecipeEntry<RecyclerRecipe>> recipe = getCurrentRecipe();
 
-        return this.getStack(INPUT_SLOT).getItem() == input.getItem() &&
-                canInsertAmountIntoOutputSlot(output.getCount()) && canInsertItemIntoOutputSlot(output);
+        if (recipe.isEmpty()){
+            return false;
+        }
+
+        ItemStack output = recipe.get().value().getResult(null);
+
+        this.maxProgress = recipe.get().value().getCookingTime();
+
+        return canInsertAmountIntoOutputSlot(output.getCount()) && canInsertItemIntoOutputSlot(output);
+    }
+
+    private Optional<RecipeEntry<RecyclerRecipe>> getCurrentRecipe() {
+        return this.getWorld().getRecipeManager().getFirstMatch(ModRecipes.RECYCLER_TYPE, new RecyclerRecipeInput(inventory.get(INPUT_SLOT)), this.world);
     }
 
     private boolean canInsertItemIntoOutputSlot(ItemStack output) {
