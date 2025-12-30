@@ -5,25 +5,27 @@ import net.acidicts.powered_tools.block.entity.ChargerBlockEntity;
 import net.acidicts.powered_tools.item.ModItems;
 import net.acidicts.powered_tools.item.custom.BatteryItem;
 import net.acidicts.powered_tools.item.custom.Powered_Pickaxe;
+import net.acidicts.powered_tools.particle.ModParticles;
 import net.acidicts.powered_tools.tags.ModTags;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.HorizontalFacingBlock;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.BlockRenderView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
@@ -44,7 +46,7 @@ public class Charger extends BlockWithEntity {
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<net.minecraft.block.Block, BlockState> builder) {
+    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
 
@@ -69,7 +71,7 @@ public class Charger extends BlockWithEntity {
     }
 
     @Override
-    public <T extends BlockEntity> net.minecraft.block.entity.BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return world.isClient ? null : (world1, pos, state1, blockEntity) -> {
             if (blockEntity instanceof ChargerBlockEntity charger) {
                 charger.tick();
@@ -102,13 +104,43 @@ public class Charger extends BlockWithEntity {
     }
 
     @Override
+    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
+        createParticles(world, pos);
+    }
+
+    private void createParticles(World world, BlockPos pos) {
+        for (int i = 0; i < 2; i++) {
+            double xPos = pos.getX() + 0.5;
+            double yPos = pos.getY() + 0.5;
+            double zPos = pos.getZ() + 0.5;
+            double offset = Math.random() * 0.6 - 0.3;
+            double velocity_x = Math.random() * 0.1 + 0.02;
+            double velocity_y = Math.abs(Math.random() * 0.1 + 0.02);
+            double velocity_z = Math.random() * 0.1 + 0.02;
+
+            if (randomBoolean()) velocity_x = -velocity_x;
+            if (randomBoolean()) velocity_y = -velocity_y;
+            if (randomBoolean()) velocity_z = -velocity_z;
+
+            world.addParticle(ModParticles.ELECTRIC_SPARK, xPos + offset, yPos, zPos + offset, velocity_x, velocity_y, velocity_z);
+        }
+    }
+
+    private boolean randomBoolean() {
+        return Math.random() < 0.5;
+    }
+
+    @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof ChargerBlockEntity) {
             if (!((ChargerBlockEntity) blockEntity).hasSpaceToOpen() && !((ChargerBlockEntity) blockEntity).hasOpened()) {
-                player.sendMessage(Text.literal("Place the Charger Without Blocks around it to open it!").formatted(net.minecraft.util.Formatting.RED), true);
+                player.sendMessage(Text.literal("Place the Charger Without Blocks around it to open it!").formatted(Formatting.RED), true);
                 return ActionResult.FAIL;
             }
+        }
+        if (((ChargerBlockEntity) blockEntity).hasOpened()) {
+            createParticles(world, pos);
         }
         if (!world.isClient && player.getMainHandStack().isIn(ModTags.Items.chargeable)) {
             var stack = player.getMainHandStack();
@@ -121,10 +153,10 @@ public class Charger extends BlockWithEntity {
                 if (rechargeAmount > 0) {
                     poweredPickaxe.setCycles(stack, poweredPickaxe.getCycles(stack) + 1);
                     poweredPickaxe.setEnergy(stack, maxCapacity);
-                    player.sendMessage(net.minecraft.text.Text.literal("Pickaxe charged!").formatted(net.minecraft.util.Formatting.GREEN), true);
+                    player.sendMessage(Text.literal("Pickaxe charged!").formatted(Formatting.GREEN), true);
                     return ActionResult.SUCCESS;
                 } else {
-                    player.sendMessage(net.minecraft.text.Text.literal("Pickaxe is already fully charged!").formatted(net.minecraft.util.Formatting.YELLOW), true);
+                    player.sendMessage(Text.literal("Pickaxe is already fully charged!").formatted(Formatting.YELLOW), true);
                     return ActionResult.SUCCESS;
                 }
             }

@@ -15,5 +15,6 @@ public class Powered_toolsDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(ModModelProvider::new);
         pack.addProvider(ModRecipeProvider::new);
         pack.addProvider(ModEntityLootTableProvider::new);
+        pack.addProvider(ModParticleProvider::new);
 	}
 }
