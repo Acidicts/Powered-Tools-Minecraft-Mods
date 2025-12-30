@@ -1,32 +1,40 @@
 {
-  "schemaVersion": 1,
-  "id": "powered_tools",
-  "version": "${version}",
-  "name": "powered_tools",
-  "description": "",
-  "authors": [],
-  "contact": {},
+	"schemaVersion": 1,
+	"id": "poweredtools",
+	"version": "${version}",
+	"name": "PoweredTools",
+	"description": "A Mod centered around using batteries for your tools",
+	"authors": [
+    "Me! (Acidicts)"
+  ],
+  "contact": {
+    "sources": "https://github.com/Acidicts/Powered-Tools-Minecraft-Mods"
+  },
   "license": "MIT",
   "icon": "icon.png",
   "environment": "*",
   "entrypoints": {
-    "fabric-datagen": [
-      "net.acidicts.powered_tools.Powered_toolsDataGenerator"
+    "main": [
+      "net.acidicts.poweredtools.PoweredTools"
     ],
     "client": [
-      "net.acidicts.powered_tools.Powered_toolsClient"
+      "net.acidicts.poweredtools.PoweredToolsClient"
     ],
-    "main": [
-      "net.acidicts.powered_tools.Powered_tools"
+    "fabric-datagen": [
+      "net.acidicts.poweredtools.PoweredToolsDataGenerator"
+    ],
+    "rei_client": [
+        "net.acidicts.poweredtools.compat.PoweredToolsModREIClient"
     ]
   },
   "mixins": [
-    "powered_tools.mixins.json"
+    "poweredtools.mixins.json"
   ],
   "depends": {
     "geckolib": ">=4.7.0",
-    "fabricloader": ">=${loader_version}",
-    "fabric-api": "*",
-    "minecraft": "${minecraft_version}"
+    "fabricloader": ">=0.18.4",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
   }
 }

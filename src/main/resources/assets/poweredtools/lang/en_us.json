@@ -1,0 +1,25 @@
+{
+  "item.poweredtools.powered_pickaxe": "Powered Pickaxe",
+  "item.poweredtools.battery_0": "Stone Battery",
+  "item.poweredtools.battery_1": "Iron Battery",
+  "item.poweredtools.battery_2": "Gold Battery",
+  "item.poweredtools.battery_3": "Diamond Battery",
+  "item.poweredtools.battery_4": "Netherite Battery",
+  "item.poweredtools.battery_5": "Diamond-Gold Battery",
+
+  "item.poweredtools.broken_battery_0": "Broken Stone Battery",
+  "item.poweredtools.broken_battery_1": "Broken Iron Battery",
+  "item.poweredtools.broken_battery_2": "Broken Gold Battery",
+  "item.poweredtools.broken_battery_3": "Broken Diamond Battery",
+  "item.poweredtools.broken_battery_4": "Broken Netherite Battery",
+  "item.poweredtools.broken_battery_5": "Broken Diamond-Gold Battery",
+
+  "itemgroup.poweredtools.powered_tools_group": "Powered Tools",
+
+  "block.poweredtools.charger": "Charger",
+  "block.poweredtools.recycler": "Recycler",
+
+  "gui.poweredtools.recycler": "Recycler",
+
+  "rei.poweredtools.recycler": "Recycler"
+}

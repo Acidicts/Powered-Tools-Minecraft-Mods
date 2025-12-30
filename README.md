@@ -24,3 +24,11 @@ I recommend using [Prism Launcher](https://prismlauncher.org/) to install Minecr
     - [Fabric API](https://modrinth.com/project/fabric-api) 
     - [Geckolib](https://modrinth.com/project/geckolib) - 4.7.0+
     - [Cloth Config API](https://modrinth.com/project/cloth-config)
+
+---
+#### Credits
+| Role                 | Name                                                                  | Tools Used              |
+|----------------------|-----------------------------------------------------------------------|-------------------------|
+| Created by           | [Acidicts](https://github.com/Acidicts)                               | Inteliji Ultimate       |
+| Art by               | [Acidicts](https://github.com/Acidicts)                               | Aseprite - Self - Built |
+| Guide Used / Skimmed | [Modding with Fabric](https://courses.kaupenjoe.net/courses/2549444/) | Null                    |
