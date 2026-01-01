@@ -1,23 +1,24 @@
 package net.acidicts.poweredtools.item.custom;
 
+import net.acidicts.poweredtools.PoweredTools;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.world.World;
+import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 import java.util.List;
 import java.util.Map;
 
 public class BatteryItem extends Item {
-    public final BatteryMaterial material;
-    public final int max_capacity;
-    public final int transfer_rate;
-    public final int lifespan;
-    public final float decay_rate;
-    public final String tier;
+
+    private final BatteryMaterial material;
 
     private final Map<String, Integer> tier_dict = Map.of(
             "Stone", 0,
@@ -29,123 +30,277 @@ public class BatteryItem extends Item {
     );
 
     public BatteryItem(BatteryMaterial material, Settings settings) {
-        super(settings.maxCount(1));
+        super(settings.maxCount(1).component(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT));
 
         this.material = material;
-        this.max_capacity = material.getCapacity();
-        this.transfer_rate = material.getTransferRate();
-        this.lifespan = material.getLifespan();
-        this.decay_rate = material.getDecayRate();
-        this.tier = material.getTier();
     }
 
-    public int getTierInt() {
-        return tier_dict.getOrDefault(this.tier, 0);
+    @Override
+    public ItemStack getDefaultStack() {
+        ItemStack stack = super.getDefaultStack();
+        initializeBatteryNbt(stack);
+        return stack;
+    }
+
+    private void initializeBatteryNbt(ItemStack stack) {
+        NbtCompound nbt = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
+
+        if (!nbt.contains("tier")) {
+            nbt.putString("tier", material.getTier());
+        }
+        if (!nbt.contains("cycles")) {
+            nbt.putInt("cycles", 0);
+        }
+        if (!nbt.contains("currentCharge")) {
+            nbt.putLong("currentCharge", 0L);
+        }
+
+        stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
+    }
+
+    private Map<String, Number> getBatteryTierProperties(String tier) {
+        return switch (tier) {
+            case "Stone" -> Map.of(
+                    "capacity", 100,
+                    "transferRate", 25,
+                    "lifespan", 5,
+                    "tierLevel", 0,
+                    "decayRate", 0.04f
+            );
+            case "Iron" -> Map.of(
+                    "capacity", 500,
+                    "transferRate", 50,
+                    "lifespan", 25,
+                    "tierLevel", 1,
+                    "decayRate", 0.02f
+            );
+            case "Gold" -> Map.of(
+                    "capacity", 1000,
+                    "transferRate", 100,
+                    "lifespan", 50,
+                    "tierLevel", 2,
+                    "decayRate", 0.015f
+            );
+            case "Diamond" -> Map.of(
+                    "capacity", 5000,
+                    "transferRate", 250,
+                    "lifespan", 200,
+                    "tierLevel", 3,
+                    "decayRate", 0.01f
+            );
+            case "Netherite" -> Map.of(
+                    "capacity", 10000,
+                    "transferRate", 500,
+                    "lifespan", 500,
+                    "tierLevel", 4,
+                    "decayRate", 0.005f
+            );
+            case "Diamond_Gold" -> Map.of(
+                    "capacity", 20000,
+                    "transferRate", 1000,
+                    "lifespan", 1000,
+                    "tierLevel", 5,
+                    "decayRate", 0.002f
+            );
+            default -> Map.of(
+                    "capacity", 0,
+                    "transferRate", 0,
+                    "lifespan", 0,
+                    "tierLevel", 0,
+                    "decayRate", 0f
+            );
+        };
     }
 
     public boolean isBroken(ItemStack stack) {
-        return getCycles(stack) >= this.lifespan;
+        return getCycles(stack) >= getBatteryLifespan(stack);
     }
 
-    private void initializeData(ItemStack stack) {
-        if (!hasData(stack)) {
-            NbtCompound nbt = new NbtCompound();
-            nbt.putInt("cycles", 0);
-            nbt.putInt("current_charge", 0);
-            stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
-        }
+    public int getBatteryLifespan(ItemStack stack) {
+        return (int) getBatteryTierProperties((String) getTier(stack, "string")).get("lifespan");
     }
 
-    private boolean hasData(ItemStack stack) {
-        NbtComponent nbtComponent = stack.get(DataComponentTypes.CUSTOM_DATA);
-        if (nbtComponent == null) {
-            return false;
-        }
-        NbtCompound nbt = nbtComponent.copyNbt();
-        return nbt.contains("cycles") && nbt.contains("current_charge");
-    }
-
-    public int getCycles(ItemStack stack) {
-        initializeData(stack);
-        NbtComponent nbtComponent = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
-        return nbtComponent.copyNbt().getInt("cycles");
-    }
-
-    public void setCycles(ItemStack stack, int cycles) {
-        initializeData(stack);
-        NbtComponent nbtComponent = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
-        NbtCompound nbt = nbtComponent.copyNbt();
-        nbt.putInt("cycles", Math.max(0, Math.min(cycles, this.lifespan)));
-        stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
-    }
-
-    public int getMaxCapacity(ItemStack stack) {
-        int cycles = getCycles(stack);
-        return (int) (this.max_capacity * (1.0f - (this.decay_rate * cycles)));
-    }
-
-    public int getCurrentCharge(ItemStack stack) {
-        initializeData(stack);
-        NbtComponent nbtComponent = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
-        return nbtComponent.copyNbt().getInt("current_charge");
-    }
-
-    public void setCurrentCharge(ItemStack stack, int charge) {
-        initializeData(stack);
-        int maxCapacity = getMaxCapacity(stack);
-        charge = Math.max(0, Math.min(charge, maxCapacity));
-
-        NbtComponent nbtComponent = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT);
-        NbtCompound nbt = nbtComponent.copyNbt();
-        nbt.putInt("current_charge", charge);
-        stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
-    }
-
-    public void useCharge(ItemStack stack, int amount) {
-        int currentCharge = getCurrentCharge(stack);
-        setCurrentCharge(stack, currentCharge - amount);
-    }
-
-    public void recharge(ItemStack stack, int amount) {
-        int currentCharge = getCurrentCharge(stack);
-        int maxCapacity = getMaxCapacity(stack);
-        int newCharge = Math.min(maxCapacity, currentCharge + amount);
-
-        setCurrentCharge(stack, newCharge);
-
-        if (newCharge >= maxCapacity && currentCharge < maxCapacity) {
-            int cycles = getCycles(stack);
-            if (cycles < this.lifespan) {
-                setCycles(stack, cycles + 1);
-                int newMaxCapacity = getMaxCapacity(stack);
-                if (newCharge > newMaxCapacity) {
-                    setCurrentCharge(stack, newMaxCapacity);
+    public Object getTier(ItemStack stack, String DataType) {
+        switch (DataType) {
+            case "int" -> {
+                String str = readNbt(stack, "tier", "string").toString();
+                if (str == null || str.isEmpty()) {
+                    str = material.getTier();
                 }
+                return tier_dict.getOrDefault(str, 0);
+            }
+            case "string" -> {
+                Object result = readNbt(stack, "tier", "string");
+                if (result == null || result.toString().isEmpty()) {
+                    return material.getTier();
+                }
+                return result;
+            }
+            default -> {
+                return null;
             }
         }
     }
 
+    public Object readNbt(ItemStack stack, String key, String dataType) {
+        NbtCompound nbt = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
+
+        switch (dataType) {
+            case "int" -> {
+                return nbt.getInt(key);
+            }
+            case "float" -> {
+                return nbt.getFloat(key);
+            }
+            case "string" -> {
+                return nbt.getString(key);
+            }
+            case "long" -> {
+                return nbt.getLong(key);
+            }
+            case "double" -> {
+                return nbt.getDouble(key);
+            }
+            case "boolean" -> {
+                return nbt.getBoolean(key);
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+
+    public void writeNbt(ItemStack stack, String key, String dataType, Object value) {
+        NbtCompound nbt = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
+
+        switch (dataType) {
+            case "int" -> nbt.putInt(key, ((Number) value).intValue());
+            case "float" -> nbt.putFloat(key, ((Number) value).floatValue());
+            case "string" -> nbt.putString(key, (String) value);
+            case "long" -> nbt.putLong(key, ((Number) value).longValue());
+            case "double" -> nbt.putDouble(key, ((Number) value).doubleValue());
+            case "boolean" -> nbt.putBoolean(key, (Boolean) value);
+        }
+
+        stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
+    }
+
+    @Override
+    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+        NbtCompound nbt = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
+        if (!nbt.contains("tier") || !nbt.contains("cycles")) {
+            initializeBatteryNbt(stack);
+        }
+        correctCharge(stack);
+
+        super.inventoryTick(stack, world, entity, slot, selected);
+    }
+
+    public int getTransferRate(ItemStack stack) {
+        return (int) getBatteryTierProperties((String) getTier(stack, "string")).get("transferRate");
+    }
+
+    private void setCycles(ItemStack stack, int i) {
+        writeNbt(stack, "cycles", "int", i);
+    }
+
+    public int recharge(ItemStack stack, int amount) {
+        int accepted = getMaxCapacity(stack) - getCurrentCharge(stack);
+        if (accepted >= amount) {
+            accepted = amount;
+        }
+        int denied = Math.max(amount - accepted, 0);
+        PoweredTools.LOGGER.info(String.valueOf(accepted));
+
+        SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(getMaxCapacity(stack), getTransferRate(stack), getTransferRate(stack));
+        energyStorage.amount = getCurrentCharge(stack);
+
+        try (Transaction transaction = Transaction.openOuter()) {
+            energyStorage.insert(accepted, transaction);
+            transaction.commit();
+        }
+        setCurrentCharge(stack, Math.toIntExact(energyStorage.getAmount()));
+
+        if (energyStorage.amount == getMaxCapacity(stack)) {
+            setCycles(stack, getCycles(stack) + 1);
+        }
+
+        return denied;
+    }
+
     public int discharge(ItemStack stack, int amount) {
-        int currentCharge = getCurrentCharge(stack);
-        int dechargedAmount = Math.min(currentCharge, amount);
-        setCurrentCharge(stack, currentCharge - dechargedAmount);
-        return dechargedAmount;
+        int available = getCurrentCharge(stack);
+        if (available >= amount) {
+            available = amount;
+        }
+        int denied = Math.max(amount - available, 0);
+
+        SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(getMaxCapacity(stack), getTransferRate(stack), getTransferRate(stack));
+        energyStorage.amount = getCurrentCharge(stack);
+
+        try (Transaction transaction = Transaction.openOuter()) {
+            energyStorage.extract(available, transaction);
+            transaction.commit();
+        }
+
+        setCurrentCharge(stack, Math.toIntExact(energyStorage.getAmount()));
+
+        if (energyStorage.amount >= getMaxCapacity(stack)) {
+            setCycles(stack, getCycles(stack) + 1);
+        }
+
+        return denied;
+    }
+
+    private void correctCharge(ItemStack stack) {
+        int maxCapacity = getMaxCapacity(stack);
+        if (getCurrentCharge(stack) > maxCapacity) {
+            setCurrentCharge(stack, maxCapacity);
+        }
+    }
+
+    public int getCycles(ItemStack stack) {
+        return (int) readNbt(stack, "cycles", "int");
+    }
+
+    public int getCurrentCharge(ItemStack stack) {
+        return Math.toIntExact((long) readNbt(stack, "currentCharge", "long"));
+    }
+
+    public void setCurrentCharge(ItemStack stack, int charge) {
+        int modded_charge = Math.max(0, Math.min(charge, getMaxCapacity(stack)));
+        writeNbt(stack, "currentCharge", "long", modded_charge);
+    }
+
+    public int getMaxCapacity(ItemStack stack) {
+        int max_cap = (int) getBatteryTierProperties((String) getTier(stack, "string")).get("capacity");
+        float degradation = (float) getBatteryTierProperties((String) getTier(stack, "string")).get("decayRate");
+
+        return (int) (max_cap * (1.0f - (degradation * getCycles(stack))));
+    }
+
+    public float getDecayRate(ItemStack stack) {
+        return (float) getBatteryTierProperties((String) getTier(stack, "string")).get("decayRate");
     }
 
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, net.minecraft.item.tooltip.TooltipType type) {
+        Map<String, Number> properties = getBatteryTierProperties((String) getTier(stack, "string"));
+
         int currentCharge = getCurrentCharge(stack);
         int maxCapacity = getMaxCapacity(stack);
         int cycles = getCycles(stack);
-        int remainingCycles = this.lifespan - cycles;
+        int lifespan = getBatteryLifespan(stack);
+
+        int remainingCycles = lifespan - cycles;
 
         tooltip.add(Text.literal("Charge: " + currentCharge + " / " + maxCapacity).formatted(Formatting.GREEN));
-        tooltip.add(Text.literal("Transfer Rate: " + this.transfer_rate + " per tick").formatted(Formatting.AQUA));
+        tooltip.add(Text.literal("Transfer Rate: " + properties.get("transferRate") + " per tick").formatted(Formatting.AQUA));
         tooltip.add(Text.literal("Remaining Cycles: " + remainingCycles).formatted(
-            remainingCycles > this.lifespan * 0.5 ? Formatting.GREEN :
-            remainingCycles > this.lifespan * 0.25 ? Formatting.YELLOW : Formatting.RED
+            remainingCycles > lifespan * 0.5 ? Formatting.GREEN :
+            remainingCycles > lifespan * 0.25 ? Formatting.YELLOW : Formatting.RED
         ));
-        tooltip.add(Text.literal("Tier: " + this.tier).formatted(Formatting.GOLD));
+        tooltip.add(Text.literal("Tier: " + (String) getTier(stack, "string")).formatted(Formatting.GOLD));
     }
 
     @Override

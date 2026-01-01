@@ -170,7 +170,7 @@ public class Powered_Pickaxe extends PickaxeItem {
 
         NbtCompound batteryNbt = new NbtCompound();
         batteryNbt.putInt("cycles", pickaxeNbt.getInt("battery_cycles"));
-        batteryNbt.putInt("current_charge", pickaxeNbt.getInt("battery_charge"));
+        batteryNbt.putLong("currentCharge", pickaxeNbt.getInt("battery_charge"));
         batteryStack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(batteryNbt));
 
 
@@ -190,11 +190,11 @@ public class Powered_Pickaxe extends PickaxeItem {
     private void installBattery(ItemStack pickaxeStack, ItemStack batteryStack, BatteryItem batteryItem) {
         NbtCompound pickaxeNbt = new NbtCompound();
 
-        pickaxeNbt.putString("battery_tier", batteryItem.tier);
-        pickaxeNbt.putInt("battery_capacity", batteryItem.max_capacity);
-        pickaxeNbt.putInt("battery_transfer_rate", batteryItem.transfer_rate);
-        pickaxeNbt.putInt("battery_lifespan", batteryItem.lifespan);
-        pickaxeNbt.putFloat("battery_decay_rate", batteryItem.decay_rate);
+        pickaxeNbt.putString("battery_tier", (String) batteryItem.getTier(batteryStack, "string"));
+        pickaxeNbt.putInt("battery_capacity", batteryItem.getMaxCapacity(batteryStack));
+        pickaxeNbt.putInt("battery_transfer_rate", batteryItem.getTransferRate(batteryStack));
+        pickaxeNbt.putInt("battery_lifespan", batteryItem.getBatteryLifespan(batteryStack));
+        pickaxeNbt.putFloat("battery_decay_rate", batteryItem.getDecayRate(batteryStack));
         pickaxeNbt.putBoolean("battery_installed", true);
 
         int cycles = batteryItem.getCycles(batteryStack);

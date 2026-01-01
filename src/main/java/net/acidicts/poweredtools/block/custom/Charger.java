@@ -1,6 +1,7 @@
 package net.acidicts.poweredtools.block.custom;
 
 import com.mojang.serialization.MapCodec;
+import net.acidicts.poweredtools.PoweredTools;
 import net.acidicts.poweredtools.block.entity.custom.ChargerBlockEntity;
 import net.acidicts.poweredtools.item.ModItems;
 import net.acidicts.poweredtools.item.custom.BatteryItem;
@@ -141,26 +142,11 @@ public class Charger extends BlockWithEntity {
         if (((ChargerBlockEntity) blockEntity).hasOpened()) {
             createParticles(world, pos);
         }
-        if (!world.isClient && player.getMainHandStack().isIn(ModTags.Items.chargeable)) {
+        if (world.isClient && player.getMainHandStack().isIn(ModTags.Items.chargeable)) {
             var stack = player.getMainHandStack();
 
-            if (stack.getItem() instanceof Powered_Pickaxe poweredPickaxe) {
-                int maxCapacity = poweredPickaxe.getMaxCapacity(stack);
-                int currentCharge = poweredPickaxe.getEnergy(stack);
-                int rechargeAmount = maxCapacity - currentCharge;
 
-                if (rechargeAmount > 0) {
-                    poweredPickaxe.setCycles(stack, poweredPickaxe.getCycles(stack) + 1);
-                    poweredPickaxe.setEnergy(stack, maxCapacity);
-                    player.sendMessage(Text.literal("Pickaxe charged!").formatted(Formatting.GREEN), true);
-                    return ActionResult.SUCCESS;
-                } else {
-                    player.sendMessage(Text.literal("Pickaxe is already fully charged!").formatted(Formatting.YELLOW), true);
-                    return ActionResult.SUCCESS;
-                }
-            }
-            // Check if it's a BatteryItem
-            else if (stack.getItem() instanceof BatteryItem batteryItem) {
+            if (stack.getItem() instanceof BatteryItem batteryItem) {
                 int maxCapacity = batteryItem.getMaxCapacity(stack);
                 int currentCharge = batteryItem.getCurrentCharge(stack);
                 int rechargeAmount = maxCapacity - currentCharge;
@@ -168,7 +154,7 @@ public class Charger extends BlockWithEntity {
                 if (batteryItem.isBroken(stack)) {
                     int slot = player.getInventory().getSlotWithStack(stack);
                     player.getInventory().removeStack(slot);
-                    Item brokenBattery = ModItems.getBrokenBatteryByTier(batteryItem.tier);
+                    Item brokenBattery = ModItems.getBrokenBatteryByTier((String) batteryItem.getTier(stack, "string"));
                     player.getInventory().insertStack(brokenBattery.getDefaultStack());
                 }
 

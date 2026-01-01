@@ -16,7 +16,6 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
     @Override
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
         getOrCreateTagBuilder(ModTags.Items.chargeable)
-                .add(ModItems.POWERED_PICKAXE)
                 .add(ModItems.BATTERY_TIER_0)
                 .add(ModItems.BATTERY_TIER_1)
                 .add(ModItems.BATTERY_TIER_2)
