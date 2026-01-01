@@ -2,6 +2,7 @@ package net.acidicts.poweredtools.block;
 
 import net.acidicts.poweredtools.PoweredTools;
 import net.acidicts.poweredtools.block.custom.Charger;
+import net.acidicts.poweredtools.block.custom.CoalGenerator;
 import net.acidicts.poweredtools.block.custom.Recycler;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -21,6 +22,9 @@ public class ModBlocks {
 
     public static final Block RECYCLER = registerBlock("recycler",
             new Recycler(AbstractBlock.Settings.create().nonOpaque().requiresTool().strength(2f).resistance(12f)));
+
+    public static final Block COAL_GENERATOR = registerBlock("coal_generator",
+            new CoalGenerator(AbstractBlock.Settings.create().nonOpaque().requiresTool().strength(2f).resistance(12f)));
 
 
     private static Block registerBlock(String name, Block block) {

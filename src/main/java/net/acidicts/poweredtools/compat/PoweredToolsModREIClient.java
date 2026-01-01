@@ -10,7 +10,7 @@ import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.acidicts.poweredtools.block.ModBlocks;
 import net.acidicts.poweredtools.recipe.ModRecipes;
 import net.acidicts.poweredtools.recipe.RecyclerRecipe;
-import net.acidicts.poweredtools.screen.custom.RecyclerScreen;
+import net.acidicts.poweredtools.screen.custom.recycler.RecyclerScreen;
 
 public class PoweredToolsModREIClient implements REIClientPlugin {
     @Override

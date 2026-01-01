@@ -1,10 +1,12 @@
-package net.acidicts.poweredtools.block.entity;
+package net.acidicts.poweredtools.block.entity.custom;
 
 import net.acidicts.poweredtools.block.custom.Recycler;
+import net.acidicts.poweredtools.block.entity.ImplementedInventory;
+import net.acidicts.poweredtools.block.entity.ModBlockEntities;
 import net.acidicts.poweredtools.recipe.ModRecipes;
 import net.acidicts.poweredtools.recipe.RecyclerRecipe;
 import net.acidicts.poweredtools.recipe.RecyclerRecipeInput;
-import net.acidicts.poweredtools.screen.custom.RecyclerScreenHandler;
+import net.acidicts.poweredtools.screen.custom.recycler.RecyclerScreenHandler;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -24,6 +26,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,6 +69,68 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
             public int size() {
                 return 2;
             }
+        };
+    }
+
+    @Override
+    public boolean canInsert(int slot, ItemStack stack, @Nullable Direction side) {
+        assert this.getWorld() != null;
+        Direction localDir = this.getWorld().getBlockState(pos).get(Recycler.FACING);
+
+        if (side == null) {
+            return false;
+        }
+
+        if (side == Direction.DOWN) {
+            return false;
+        }
+
+        if (side == Direction.UP) {
+            return slot == INPUT_SLOT;
+        }
+
+        return switch (localDir) {
+            case EAST ->
+                    side.rotateYClockwise() == Direction.NORTH && slot == INPUT_SLOT ||
+                            side.rotateYClockwise() == Direction.WEST && slot == INPUT_SLOT;
+            case SOUTH ->
+                    side == Direction.NORTH && slot == INPUT_SLOT ||
+                            side == Direction.WEST && slot == INPUT_SLOT;
+            case WEST ->
+                    side.rotateYCounterclockwise() == Direction.NORTH && slot == INPUT_SLOT ||
+                            side.rotateYCounterclockwise() == Direction.WEST && slot == INPUT_SLOT;
+            default -> // North
+                    side.getOpposite() == Direction.NORTH && slot == INPUT_SLOT ||
+                            side.getOpposite() == Direction.WEST && slot == INPUT_SLOT;
+        };
+    }
+
+    @Override
+    public boolean canExtract(int slot, ItemStack stack, Direction side) {
+        assert this.getWorld() != null;
+        Direction localDir = this.getWorld().getBlockState(pos).get(Recycler.FACING);
+
+        if (side == Direction.UP) {
+            return false;
+        }
+
+        if (side == Direction.DOWN) {
+            return slot == OUTPUT_SLOT;
+        }
+
+        return switch (localDir) {
+            case EAST ->
+                    side.rotateYClockwise() == Direction.SOUTH && slot == OUTPUT_SLOT ||
+                            side.rotateYClockwise() == Direction.EAST && slot == OUTPUT_SLOT;
+            case SOUTH ->
+                    side == Direction.SOUTH && slot == OUTPUT_SLOT ||
+                            side == Direction.EAST && slot == OUTPUT_SLOT;
+            case WEST ->
+                    side.rotateYCounterclockwise() == Direction.SOUTH && slot == OUTPUT_SLOT ||
+                            side.rotateYCounterclockwise() == Direction.EAST && slot == OUTPUT_SLOT;
+            default -> // North
+                    side.getOpposite() == Direction.SOUTH && slot == OUTPUT_SLOT ||
+                            side.getOpposite() == Direction.EAST && slot == OUTPUT_SLOT;
         };
     }
 

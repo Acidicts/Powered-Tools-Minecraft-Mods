@@ -1,4 +1,4 @@
-package net.acidicts.poweredtools.screen.custom;
+package net.acidicts.poweredtools.screen.custom.recycler;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.acidicts.poweredtools.PoweredTools;

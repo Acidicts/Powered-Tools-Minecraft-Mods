@@ -1,7 +1,7 @@
 package net.acidicts.poweredtools.block.custom;
 
 import com.mojang.serialization.MapCodec;
-import net.acidicts.poweredtools.block.entity.ChargerBlockEntity;
+import net.acidicts.poweredtools.block.entity.custom.ChargerBlockEntity;
 import net.acidicts.poweredtools.item.ModItems;
 import net.acidicts.poweredtools.item.custom.BatteryItem;
 import net.acidicts.poweredtools.item.custom.Powered_Pickaxe;

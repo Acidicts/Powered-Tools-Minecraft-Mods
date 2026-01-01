@@ -2,7 +2,7 @@ package net.acidicts.poweredtools.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import net.acidicts.poweredtools.block.entity.ModBlockEntities;
-import net.acidicts.poweredtools.block.entity.RecyclerBlockEntity;
+import net.acidicts.poweredtools.block.entity.custom.RecyclerBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;

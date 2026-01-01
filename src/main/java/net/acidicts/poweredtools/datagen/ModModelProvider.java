@@ -1,5 +1,6 @@
 package net.acidicts.poweredtools.datagen;
 
+import me.shedaniel.errornotifier.launch.early.Texture;
 import net.acidicts.poweredtools.block.ModBlocks;
 import net.acidicts.poweredtools.item.ModItems;
 import net.acidicts.poweredtools.item.custom.BatteryItem;
@@ -55,6 +56,8 @@ public class ModModelProvider extends FabricModelProvider {
                     .register(Direction.WEST, true, BlockStateVariant.create().put(VariantSettings.MODEL, modelIdLit).put(VariantSettings.Y, VariantSettings.Rotation.R270))
                 )
         );
+
+        blockStateModelGenerator.registerNorthDefaultHorizontalRotation(ModBlocks.COAL_GENERATOR);
     }
 
     @Override

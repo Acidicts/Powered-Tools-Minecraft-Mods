@@ -1,6 +1,7 @@
-package net.acidicts.poweredtools.block.entity;
+package net.acidicts.poweredtools.block.entity.custom;
 
 import net.acidicts.poweredtools.PoweredTools;
+import net.acidicts.poweredtools.block.entity.ModBlockEntities;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;

@@ -4,7 +4,8 @@ import net.acidicts.poweredtools.block.entity.ModBlockEntities;
 import net.acidicts.poweredtools.block.entity.renderer.charger.ChargerBlockRenderer;
 import net.acidicts.poweredtools.particle.ModParticles;
 import net.acidicts.poweredtools.screen.ModScreenHandlers;
-import net.acidicts.poweredtools.screen.custom.RecyclerScreen;
+import net.acidicts.poweredtools.screen.custom.coal_generator.CoalGeneratorScreen;
+import net.acidicts.poweredtools.screen.custom.recycler.RecyclerScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
@@ -17,6 +18,7 @@ public class PoweredToolsClient implements ClientModInitializer {
         BlockEntityRendererFactories.register(ModBlockEntities.CHARGER_BLOCK_ENTITY, ChargerBlockRenderer::new);
 
         HandledScreens.register(ModScreenHandlers.RECYCLER_SCREEN_HANDLER, RecyclerScreen::new);
+        HandledScreens.register(ModScreenHandlers.COAL_GENERATOR_SCREEN_HANDLER, CoalGeneratorScreen::new);
 
         ParticleFactoryRegistry.getInstance().register(ModParticles.ELECTRIC_SPARK, FlameParticle.Factory::new);
     }

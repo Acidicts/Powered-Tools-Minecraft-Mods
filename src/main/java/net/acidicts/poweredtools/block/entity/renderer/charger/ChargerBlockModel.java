@@ -1,7 +1,7 @@
 package net.acidicts.poweredtools.block.entity.renderer.charger;
 
 import net.acidicts.poweredtools.PoweredTools;
-import net.acidicts.poweredtools.block.entity.ChargerBlockEntity;
+import net.acidicts.poweredtools.block.entity.custom.ChargerBlockEntity;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib.model.GeoModel;
 

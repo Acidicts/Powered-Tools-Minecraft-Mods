@@ -1,6 +1,6 @@
-package net.acidicts.poweredtools.screen.custom;
+package net.acidicts.poweredtools.screen.custom.recycler;
 
-import net.acidicts.poweredtools.block.entity.RecyclerBlockEntity;
+import net.acidicts.poweredtools.block.entity.custom.RecyclerBlockEntity;
 import net.acidicts.poweredtools.screen.ModScreenHandlers;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
