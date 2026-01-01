@@ -2,10 +2,10 @@ package net.acidicts.poweredtools.block.entity.custom;
 
 import net.acidicts.poweredtools.block.entity.ImplementedInventory;
 import net.acidicts.poweredtools.block.entity.ModBlockEntities;
+import net.acidicts.poweredtools.data.Burnables;
 import net.acidicts.poweredtools.screen.custom.coal_generator.CoalGeneratorScreenHandler;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.minecraft.MinecraftVersion;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,13 +13,11 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -38,9 +36,11 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
     private static final int INPUT_SLOT = 0;
 
     protected final PropertyDelegate propertyDelegate;
+    private Item fuelItem;
     private int burnProgress = 0;
     private int maxBurnProgress = 160;
     private boolean isBurning = false;
+    private Burnables burnables = new Burnables();
 
     private static final int ENERGY_TRANSFER_AMOUNT = 320;
 
@@ -131,11 +131,13 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
         }
 
         if (isBurningFuel()) {
-            increaseBurnTimer();
-            if (currentFuelDoneBurning()) {
-                resetBurning();
+            if (hasRoomForEnergyTick()) {
+                increaseBurnTimer();
+                fillUpOnEnergy();
+                if (currentFuelDoneBurning()) {
+                    resetBurning();
+                }
             }
-            fillUpOnEnergy();
         }
 
         pushEnergyToNeighbours();
@@ -143,29 +145,58 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
 
     private void pushEnergyToNeighbours() {
         EnergyStorageUtil.move(this.energyStorage, EnergyStorage.SIDED.find(world, pos.up(), null), Long.MAX_VALUE, null);
+        EnergyStorageUtil.move(this.energyStorage, EnergyStorage.SIDED.find(world, pos.down(), null), Long.MAX_VALUE, null);
+        EnergyStorageUtil.move(this.energyStorage, EnergyStorage.SIDED.find(world, pos.east(), null), Long.MAX_VALUE, null);
+        EnergyStorageUtil.move(this.energyStorage, EnergyStorage.SIDED.find(world, pos.west(), null), Long.MAX_VALUE, null);
+        EnergyStorageUtil.move(this.energyStorage, EnergyStorage.SIDED.find(world, pos.north(), null), Long.MAX_VALUE, null);
+        EnergyStorageUtil.move(this.energyStorage, EnergyStorage.SIDED.find(world, pos.south(), null), Long.MAX_VALUE, null);
     }
 
     private void fillUpOnEnergy() {
+        if (fuelItem == null) {
+            return;
+        }
+
+        int energyToAdd = burnables.getEnergyValue(fuelItem, this.maxBurnProgress);
+        if (energyToAdd <= 0) {
+            return;
+        }
+
         try (Transaction transaction = Transaction.openOuter()){
-            energyStorage.insert(320, transaction);
+            energyStorage.insert(energyToAdd, transaction);
             transaction.commit();
         }
     }
 
     private void resetBurning() {
         isBurning = false;
-        this.burnProgress = this.maxBurnProgress;
+        fuelItem = null;
+        this.burnProgress = maxBurnProgress;
     }
 
     private boolean currentFuelDoneBurning() {
-        return false;
+        return this.burnProgress <= (int) 0 ;
     }
 
     private void increaseBurnTimer() {
-        burnProgress--;
+        int time = burnables.getEnergyValue(this.getStack(INPUT_SLOT).getItem(), 1) / ENERGY_TRANSFER_AMOUNT;
+        int diff = burnables.getEnergyValue(this.getStack(INPUT_SLOT).getItem(), time);
+        if (energyStorage.amount + diff <= energyStorage.capacity) {
+            burnProgress++;
+        }
+    }
+
+    private boolean hasRoomForEnergyTick() {
+        if (fuelItem == null) {
+            return false;
+        }
+
+        int energyToAdd = burnables.getEnergyValue(fuelItem, this.maxBurnProgress);
+        return energyStorage.amount + energyToAdd <= energyStorage.capacity;
     }
 
     private void startBurning() {
+        fuelItem = this.getStack(INPUT_SLOT).getItem();
         this.removeStack(INPUT_SLOT, 1);
         isBurning = true;
     }
@@ -175,7 +206,8 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
     }
 
     private boolean hasFuelItemInSlot() {
-        return this.getStack(INPUT_SLOT).isOf(Items.COAL);
+        this.burnProgress = burnables.getEnergyValue(this.getStack(INPUT_SLOT).getItem(), 1) / ENERGY_TRANSFER_AMOUNT;
+        return burnables.getEnergyValue(this.getStack(INPUT_SLOT).getItem(), 1) != 0;
     }
 
     @Nullable

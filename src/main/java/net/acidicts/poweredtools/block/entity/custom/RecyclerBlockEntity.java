@@ -8,6 +8,7 @@ import net.acidicts.poweredtools.recipe.RecyclerRecipe;
 import net.acidicts.poweredtools.recipe.RecyclerRecipeInput;
 import net.acidicts.poweredtools.screen.custom.recycler.RecyclerScreenHandler;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,6 +30,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 import java.util.Optional;
 
@@ -44,6 +46,17 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
     private int progress = 0;
     private int maxProgress = 72;
     private final int DEFAULT_MAX_PROGRESS = 72;
+
+    private static final int ENERGY_CRAFTING_AMOUNT = 50;
+    private static final int ENERGY_TRANSFER_AMOUNT = 320;
+
+    public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(64000, ENERGY_TRANSFER_AMOUNT, ENERGY_TRANSFER_AMOUNT) {
+        @Override
+        protected void onFinalCommit() {
+            markDirty();
+            getWorld().updateListeners(pos, getCachedState(), getCachedState(), 3);
+        }
+    };
 
     public RecyclerBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.RECYCLER_BLOCK_ENTITY, pos, state);
@@ -160,6 +173,7 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
         Inventories.writeNbt(nbt, inventory, registryLookup);
         nbt.putInt("recycler.progress", progress);
         nbt.putInt("recycler.max_progress", maxProgress);
+        nbt.putLong("recycler.energy", energyStorage.amount);
     }
 
     @Override
@@ -167,6 +181,7 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
         Inventories.readNbt(nbt, inventory, registryLookup);
         progress = nbt.getInt("recycler.progress");
         maxProgress = nbt.getInt("recycler.max_progress");
+        energyStorage.amount = nbt.getLong("recycler.energy");
         super.readNbt(nbt, registryLookup);
     }
 
@@ -174,7 +189,6 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
         if (hasRecipe() && canInsertIntoOutputSlot()) {
             increaseCraftingProgress();
             world.setBlockState(pos, state.with(Recycler.LIT, true));
-            markDirty(world, pos, state);
 
             if (hasCraftingFinished()) {
                 craftItem();
@@ -183,8 +197,8 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
         } else {
             world.setBlockState(pos, state.with(Recycler.LIT, false));
             resetProgress();
-            markDirty(world, pos, state);
         }
+        markDirty(world, pos, state);
     }
 
     private void resetProgress() {
@@ -206,7 +220,13 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
     }
 
     private void increaseCraftingProgress() {
-        this.progress++;
+        if (!hasEnoughEnergy(ENERGY_CRAFTING_AMOUNT)) {
+            this.progress++;
+            try (Transaction transaction = Transaction.openOuter()) {
+                this.energyStorage.extract(ENERGY_CRAFTING_AMOUNT, transaction);
+                transaction.commit();
+            }
+        }
     }
 
     private boolean canInsertIntoOutputSlot() {
@@ -228,6 +248,10 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
         return canInsertAmountIntoOutputSlot(output.getCount()) && canInsertItemIntoOutputSlot(output);
     }
 
+    private boolean hasEnoughEnergy(int amount) {
+        return amount >= this.energyStorage.amount;
+    }
+
     private Optional<RecipeEntry<RecyclerRecipe>> getCurrentRecipe() {
         return this.getWorld().getRecipeManager().getFirstMatch(ModRecipes.RECYCLER_TYPE, new RecyclerRecipeInput(inventory.get(INPUT_SLOT)), this.world);
     }
@@ -245,5 +269,10 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
     @Override
     public Packet<ClientPlayPacketListener> toUpdatePacket() {
         return BlockEntityUpdateS2CPacket.create(this);
+    }
+
+    @Override
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
+        return this.createNbt(registryLookup);
     }
 }

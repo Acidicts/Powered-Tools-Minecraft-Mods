@@ -25,12 +25,12 @@ public class CoalGenerator extends BlockWithEntity {
 
     public CoalGenerator(Settings settings) {
         super(settings);
-    };
+    }
 
     @Override
     protected MapCodec<? extends BlockWithEntity> getCodec() {
         return CODEC;
-    };
+    }
 
     @Override
     protected BlockRenderType getRenderType(BlockState state) {
@@ -71,7 +71,7 @@ public class CoalGenerator extends BlockWithEntity {
     @Override
     public @Nullable BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new CoalGeneratorBlockEntity(pos, state);
-    };
+    }
 
     @Override
     protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {

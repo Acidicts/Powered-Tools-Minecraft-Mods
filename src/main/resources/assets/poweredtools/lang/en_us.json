@@ -18,7 +18,7 @@
 
   "block.poweredtools.charger": "Charger",
   "block.poweredtools.recycler": "Recycler",
-  "block.poweredtools.coal_generator": "Coal Generator",
+  "block.poweredtools.coal_generator": "Generator",
 
   "gui.poweredtools.recycler": "Recycler",
   "gui.poweredtools.coal_generator": "Coal Generator",

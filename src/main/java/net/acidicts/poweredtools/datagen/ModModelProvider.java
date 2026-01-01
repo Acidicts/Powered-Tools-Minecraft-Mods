@@ -2,6 +2,7 @@ package net.acidicts.poweredtools.datagen;
 
 import me.shedaniel.errornotifier.launch.early.Texture;
 import net.acidicts.poweredtools.block.ModBlocks;
+import net.acidicts.poweredtools.block.custom.Recycler;
 import net.acidicts.poweredtools.item.ModItems;
 import net.acidicts.poweredtools.item.custom.BatteryItem;
 import net.acidicts.poweredtools.item.custom.BrokenBatteryItem;
@@ -40,22 +41,6 @@ public class ModModelProvider extends FabricModelProvider {
 
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
-        Identifier modelId = ModelIds.getBlockModelId(ModBlocks.RECYCLER);
-        Identifier modelIdLit = ModelIds.getBlockSubModelId(ModBlocks.RECYCLER, "_lit");
-
-        blockStateModelGenerator.blockStateCollector.accept(
-            VariantsBlockStateSupplier.create(ModBlocks.RECYCLER)
-                .coordinate(BlockStateVariantMap.create(Properties.HORIZONTAL_FACING, Properties.LIT)
-                    .register(Direction.NORTH, false, BlockStateVariant.create().put(VariantSettings.MODEL, modelId).put(VariantSettings.Y, VariantSettings.Rotation.R0))
-                    .register(Direction.EAST, false, BlockStateVariant.create().put(VariantSettings.MODEL, modelId).put(VariantSettings.Y, VariantSettings.Rotation.R90))
-                    .register(Direction.SOUTH, false, BlockStateVariant.create().put(VariantSettings.MODEL, modelId).put(VariantSettings.Y, VariantSettings.Rotation.R180))
-                    .register(Direction.WEST, false, BlockStateVariant.create().put(VariantSettings.MODEL, modelId).put(VariantSettings.Y, VariantSettings.Rotation.R270))
-                    .register(Direction.NORTH, true, BlockStateVariant.create().put(VariantSettings.MODEL, modelIdLit).put(VariantSettings.Y, VariantSettings.Rotation.R0))
-                    .register(Direction.EAST, true, BlockStateVariant.create().put(VariantSettings.MODEL, modelIdLit).put(VariantSettings.Y, VariantSettings.Rotation.R90))
-                    .register(Direction.SOUTH, true, BlockStateVariant.create().put(VariantSettings.MODEL, modelIdLit).put(VariantSettings.Y, VariantSettings.Rotation.R180))
-                    .register(Direction.WEST, true, BlockStateVariant.create().put(VariantSettings.MODEL, modelIdLit).put(VariantSettings.Y, VariantSettings.Rotation.R270))
-                )
-        );
 
         blockStateModelGenerator.registerNorthDefaultHorizontalRotation(ModBlocks.COAL_GENERATOR);
     }

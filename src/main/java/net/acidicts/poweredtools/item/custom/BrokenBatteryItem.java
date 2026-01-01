@@ -28,7 +28,7 @@ public class BrokenBatteryItem extends Item {
     );
 
     public BrokenBatteryItem(BatteryMaterial material, Settings settings) {
-        super(settings.maxCount(1));
+        super(settings.maxCount(64));
 
         this.material = material;
         this.max_capacity = material.getCapacity();

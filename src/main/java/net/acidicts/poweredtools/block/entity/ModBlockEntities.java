@@ -2,6 +2,7 @@ package net.acidicts.poweredtools.block.entity;
 
 import net.acidicts.poweredtools.PoweredTools;
 import net.acidicts.poweredtools.block.ModBlocks;
+import net.acidicts.poweredtools.block.custom.Recycler;
 import net.acidicts.poweredtools.block.entity.custom.ChargerBlockEntity;
 import net.acidicts.poweredtools.block.entity.custom.CoalGeneratorBlockEntity;
 import net.acidicts.poweredtools.block.entity.custom.RecyclerBlockEntity;
@@ -38,6 +39,7 @@ public class ModBlockEntities {
         PoweredTools.LOGGER.info("Registering Block Entities for {}", PoweredTools.MOD_ID);
 
         EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, COAL_GENERATOR_BLOCK_ENTITY);
+        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, RECYCLER_BLOCK_ENTITY);
     }
 }
 

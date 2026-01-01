@@ -28,7 +28,6 @@ public class CoalGeneratorScreen extends HandledScreen<CoalGeneratorScreenHandle
     @Override
     protected void init() {
         super.init();
-        // Center title
         titleX = (width - backgroundWidth) / 2;
 
         assignEnergyInfoArea();
