@@ -4,6 +4,7 @@ on:
     paths:
       - 'gradle.properties'
       - '.github/workflows/update-version.json'
+      - 'README.md'
 
 jobs:
   update-json:
