@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - 'gradle.properties'
+      - '.github/workflows/update-version.json'
+      - 'README.md'
 
 jobs:
   update-json:
@@ -15,7 +17,7 @@ jobs:
       - name: Extract Data
         run: |
           VERSION=$(grep 'mod_version=' gradle.properties | cut -d'=' -f2)
-          UPDATED=$(date +'%Y-%m-%d')
+          UPDATED=$(date +'%d-%m-%Y')
           echo "{\"mod_version\": \"$VERSION\", \"last_updated\": \"$UPDATED\"}" > version.json
 
       - name: Commit and Push
