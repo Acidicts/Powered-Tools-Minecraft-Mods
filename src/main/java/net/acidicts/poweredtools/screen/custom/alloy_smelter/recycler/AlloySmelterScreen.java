@@ -73,7 +73,7 @@ public class AlloySmelterScreen extends HandledScreen<AlloySmelterScreenHandler>
 
     private void renderProgressArrow(DrawContext context, int x, int y) {
         if(handler.isCrafting()) {
-            context.drawTexture(ARROW_TEXTURE, x, y, 0, 0,
+            context.drawTexture(ARROW_TEXTURE, x+39, y+19, 0, 0,
                     handler.getScaledArrowProgress(), 54, 256, 256);
         }
     }

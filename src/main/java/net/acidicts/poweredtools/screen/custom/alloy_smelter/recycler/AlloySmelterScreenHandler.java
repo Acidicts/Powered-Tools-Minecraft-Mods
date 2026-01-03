@@ -50,7 +50,7 @@ public class AlloySmelterScreenHandler extends ScreenHandler {
     public int getScaledArrowProgress() {
         int progress = this.propertyDelegate.get(0);
         int maxProgress = this.propertyDelegate.get(1);
-        int arrowWidth = 24;
+        int arrowWidth = 73;
 
         return maxProgress != 0 && progress != 0 ? progress * arrowWidth / maxProgress : 0;
     }
