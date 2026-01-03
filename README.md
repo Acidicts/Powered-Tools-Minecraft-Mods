@@ -32,3 +32,7 @@ I recommend using [Prism Launcher](https://prismlauncher.org/) to install Minecr
 | Created by           | [Acidicts](https://github.com/Acidicts)                               | Inteliji Ultimate       |
 | Art by               | [Acidicts](https://github.com/Acidicts)                               | Aseprite - Self - Built |
 | Guide Used / Skimmed | [Modding with Fabric](https://courses.kaupenjoe.net/courses/2549444/) | Null                    |
+
+---
+#### Footer
+Build Version: ![Version](https://img.shields.io/badge/dynamic/yaml?label=version&query=mod_version&url=https://raw.githubusercontent.com/Acidicts/Powered-Tools-Minecraft-Mods/master/gradle.properties)
