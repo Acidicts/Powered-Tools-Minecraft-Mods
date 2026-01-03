@@ -35,6 +35,6 @@ I recommend using [Prism Launcher](https://prismlauncher.org/) to install Minecr
 
 ---
 #### Footer
-###### ![Version](https://img.shields.io/badge/dynamic/json?color=orange&label=Version&query=$.mod_version&url=https://raw.githubusercontent.com/Acidicts/Powered-Tools-Minecraft-Mods/master/version.json)
-###### ![Updated](https://img.shields.io/badge/dynamic/json?color=blue&label=Last+Updated&query=$.last_updated&url=https://raw.githubusercontent.com/Acidicts/Powered-Tools-Minecraft-Mods/master/version.json)
+###### ![Version](https://img.shields.io/badge/dynamic/json?color=orange&label=Version&query=$.mod_version&url=https://raw.githubusercontent.com/Acidicts/Powered-Tools-Minecraft-Mods/refs/heads/master/version.json)
+###### ![Updated](https://img.shields.io/badge/dynamic/json?color=blue&label=Last+Updated&query=$.last_updated&url=https://raw.githubusercontent.com/Acidicts/Powered-Tools-Minecraft-Mods/refs/heads/master/version.json)
 ###### ![Last Commit](https://img.shields.io/github/last-commit/Acidicts/Powered-Tools-Minecraft-Mods)
