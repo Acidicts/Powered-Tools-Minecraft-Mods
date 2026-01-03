@@ -1,0 +1,27 @@
+name: Update Version JSON
+on:
+  push:
+    paths:
+      - 'gradle.properties'
+
+jobs:
+  update-json:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract Data
+        run: |
+          VERSION=$(grep 'mod_version=' gradle.properties | cut -d'=' -f2)
+          UPDATED=$(date +'%Y-%m-%d')
+          echo "{\"mod_version\": \"$VERSION\", \"last_updated\": \"$UPDATED\"}" > version.json
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add version.json
+          git commit -m "docs: update version.json to $VERSION" || exit 0
+          git push
