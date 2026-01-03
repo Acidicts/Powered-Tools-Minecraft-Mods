@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "poweredtools:block/alloy_smelter",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "poweredtools:block/alloy_smelter"
+    },
+    "facing=south": {
+      "model": "poweredtools:block/alloy_smelter",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "poweredtools:block/alloy_smelter",
+      "y": 270
+    }
+  }
+}
