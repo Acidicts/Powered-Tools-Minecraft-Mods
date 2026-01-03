@@ -1,12 +1,12 @@
 package net.acidicts.poweredtools.block.entity.custom;
 
-import net.acidicts.poweredtools.block.custom.Recycler;
+import net.acidicts.poweredtools.block.custom.AlloySmelter;
 import net.acidicts.poweredtools.block.entity.ImplementedInventory;
 import net.acidicts.poweredtools.block.entity.ModBlockEntities;
 import net.acidicts.poweredtools.recipe.ModRecipes;
-import net.acidicts.poweredtools.recipe.recycler.RecyclerRecipe;
-import net.acidicts.poweredtools.recipe.recycler.RecyclerRecipeInput;
-import net.acidicts.poweredtools.screen.custom.recycler.RecyclerScreenHandler;
+import net.acidicts.poweredtools.recipe.alloy_smelter.AlloySmelterRecipe;
+import net.acidicts.poweredtools.recipe.alloy_smelter.AlloySmelterRecipeInput;
+import net.acidicts.poweredtools.screen.custom.alloy_smelter.recycler.AlloySmelterScreenHandler;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.BlockState;
@@ -32,15 +32,17 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 
+import java.util.Map;
 import java.util.Optional;
 
-public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory<BlockPos>, ImplementedInventory {
-    private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(4, ItemStack.EMPTY);
+public class AlloySmelterBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory<BlockPos>, ImplementedInventory {
+    private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(5, ItemStack.EMPTY);
 
-    private static final int BATTERY_MATERIAL_SLOT = 0;
-    private static final int INPUT_SLOT = 1;
-    private static final int OUTPUT_SLOT = 2;
-    private static final int Energy_ITEM_SLOT = 3;
+    private static final int INPUT_SLOT_0 = 0;
+    private static final int INPUT_SLOT_1 = 1;
+    private static final int INPUT_SLOT_2 = 2;
+    private static final int OUTPUT_SLOT = 3;
+    private static final int Energy_ITEM_SLOT = 4;
 
     protected final PropertyDelegate propertyDelegate;
     private int progress = 0;
@@ -58,14 +60,14 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
         }
     };
 
-    public RecyclerBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.RECYCLER_BLOCK_ENTITY, pos, state);
+    public AlloySmelterBlockEntity(BlockPos pos, BlockState state) {
+        super(ModBlockEntities.ALLOY_SMELTER_BLOCK_ENTITY, pos, state);
         this.propertyDelegate = new PropertyDelegate() {
             @Override
             public int get(int index) {
                 return switch (index) {
-                    case 0 -> RecyclerBlockEntity.this.progress;
-                    case 1 -> RecyclerBlockEntity.this.maxProgress;
+                    case 0 -> AlloySmelterBlockEntity.this.progress;
+                    case 1 -> AlloySmelterBlockEntity.this.maxProgress;
                     default -> 0;
                 };
             }
@@ -73,8 +75,8 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
             @Override
             public void set(int index, int value) {
                 switch (index) {
-                    case 0: RecyclerBlockEntity.this.progress = value;
-                    case 1: RecyclerBlockEntity.this.maxProgress = value;
+                    case 0: AlloySmelterBlockEntity.this.progress = value;
+                    case 1: AlloySmelterBlockEntity.this.maxProgress = value;
                 }
             }
 
@@ -88,7 +90,7 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
     @Override
     public boolean canInsert(int slot, ItemStack stack, @Nullable Direction side) {
         assert this.getWorld() != null;
-        Direction localDir = this.getWorld().getBlockState(pos).get(Recycler.FACING);
+        Direction localDir = this.getWorld().getBlockState(pos).get(AlloySmelter.FACING);
 
         if (side == null) {
             return false;
@@ -99,52 +101,31 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
         }
 
         if (side == Direction.UP) {
-            return slot == INPUT_SLOT;
+            return slot == INPUT_SLOT_1;
         }
 
-        return switch (localDir) {
-            case EAST ->
-                    side.rotateYClockwise() == Direction.NORTH && slot == INPUT_SLOT ||
-                            side.rotateYClockwise() == Direction.WEST && slot == INPUT_SLOT;
-            case SOUTH ->
-                    side == Direction.NORTH && slot == INPUT_SLOT ||
-                            side == Direction.WEST && slot == INPUT_SLOT;
-            case WEST ->
-                    side.rotateYCounterclockwise() == Direction.NORTH && slot == INPUT_SLOT ||
-                            side.rotateYCounterclockwise() == Direction.WEST && slot == INPUT_SLOT;
-            default -> // North
-                    side.getOpposite() == Direction.NORTH && slot == INPUT_SLOT ||
-                            side.getOpposite() == Direction.WEST && slot == INPUT_SLOT;
-        };
+        Direction right = localDir.rotateYClockwise();
+        Direction left = localDir.rotateYCounterclockwise();
+
+        if (side == right) {
+            return slot == INPUT_SLOT_2;
+        } else if (side == left) {
+            return slot == INPUT_SLOT_0;
+        }
+
+        return false;
     }
 
     @Override
     public boolean canExtract(int slot, ItemStack stack, Direction side) {
         assert this.getWorld() != null;
-        Direction localDir = this.getWorld().getBlockState(pos).get(Recycler.FACING);
-
-        if (side == Direction.UP) {
-            return false;
-        }
+        Direction localDir = this.getWorld().getBlockState(pos).get(AlloySmelter.FACING);
 
         if (side == Direction.DOWN) {
             return slot == OUTPUT_SLOT;
         }
 
-        return switch (localDir) {
-            case EAST ->
-                    side.rotateYClockwise() == Direction.SOUTH && slot == OUTPUT_SLOT ||
-                            side.rotateYClockwise() == Direction.EAST && slot == OUTPUT_SLOT;
-            case SOUTH ->
-                    side == Direction.SOUTH && slot == OUTPUT_SLOT ||
-                            side == Direction.EAST && slot == OUTPUT_SLOT;
-            case WEST ->
-                    side.rotateYCounterclockwise() == Direction.SOUTH && slot == OUTPUT_SLOT ||
-                            side.rotateYCounterclockwise() == Direction.EAST && slot == OUTPUT_SLOT;
-            default -> // North
-                    side.getOpposite() == Direction.SOUTH && slot == OUTPUT_SLOT ||
-                            side.getOpposite() == Direction.EAST && slot == OUTPUT_SLOT;
-        };
+        return false;
     }
 
     @Override
@@ -164,38 +145,38 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
 
     @Override
     public @Nullable ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-        return new RecyclerScreenHandler(syncId, playerInventory, this, propertyDelegate);
+        return new AlloySmelterScreenHandler(syncId, playerInventory, this, propertyDelegate);
     }
 
     @Override
     protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         super.writeNbt(nbt, registryLookup);
         Inventories.writeNbt(nbt, inventory, registryLookup);
-        nbt.putInt("recycler.progress", progress);
-        nbt.putInt("recycler.max_progress", maxProgress);
-        nbt.putLong("recycler.energy", energyStorage.amount);
+        nbt.putInt("alloyer.progress", progress);
+        nbt.putInt("alloyer.max_progress", maxProgress);
+        nbt.putLong("alloyer.energy", energyStorage.amount);
     }
 
     @Override
     protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         Inventories.readNbt(nbt, inventory, registryLookup);
-        progress = nbt.getInt("recycler.progress");
-        maxProgress = nbt.getInt("recycler.max_progress");
-        energyStorage.amount = nbt.getLong("recycler.energy");
+        progress = nbt.getInt("alloyer.progress");
+        maxProgress = nbt.getInt("alloyer.max_progress");
+        energyStorage.amount = nbt.getLong("alloyer.energy");
         super.readNbt(nbt, registryLookup);
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
         if (hasRecipe() && canInsertIntoOutputSlot()) {
             increaseCraftingProgress();
-            world.setBlockState(pos, state.with(Recycler.LIT, true));
+            world.setBlockState(pos, state.with(AlloySmelter.LIT, true));
 
             if (hasCraftingFinished()) {
                 craftItem();
                 resetProgress();
             }
         } else {
-            world.setBlockState(pos, state.with(Recycler.LIT, false));
+            world.setBlockState(pos, state.with(AlloySmelter.LIT, false));
             resetProgress();
         }
         markDirty(world, pos, state);
@@ -206,21 +187,33 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
         this.maxProgress = DEFAULT_MAX_PROGRESS;
     }
 
-    private void craftItem() {
-        Optional<RecipeEntry<RecyclerRecipe>> recipe = getCurrentRecipe();
+    private Map<Integer, Boolean> getInputSlotsStatus() {
+        return Map.of(
+                INPUT_SLOT_0, !this.getStack(INPUT_SLOT_0).isEmpty(),
+                INPUT_SLOT_1, !this.getStack(INPUT_SLOT_1).isEmpty(),
+                INPUT_SLOT_2, !this.getStack(INPUT_SLOT_2).isEmpty()
+        );
+    }
 
-        this.removeStack(INPUT_SLOT, 1);
+    private void craftItem() {
+        Optional<RecipeEntry<AlloySmelterRecipe>> recipe = getCurrentRecipe();
+
+        for (Map.Entry<Integer, Boolean> entry : getInputSlotsStatus().entrySet()) {
+            if (entry.getValue()) {
+                this.removeStack(entry.getKey(), 1);
+            }
+        }
         this.setStack(OUTPUT_SLOT, new ItemStack(recipe.get().value().output().getItem(),
                 this.getStack(OUTPUT_SLOT).getCount() + recipe.get().value().getResult(null).getCount()));
     }
 
     private boolean hasCraftingFinished() {
-        Optional<RecipeEntry<RecyclerRecipe>> recipe = getCurrentRecipe();
+        Optional<RecipeEntry<AlloySmelterRecipe>> recipe = getCurrentRecipe();
         return this.progress >= this.maxProgress;
     }
 
     private void increaseCraftingProgress() {
-        if (!hasEnoughEnergy(ENERGY_CRAFTING_AMOUNT)) {
+        if (hasEnoughEnergy(ENERGY_CRAFTING_AMOUNT)) {
             this.progress++;
             try (Transaction transaction = Transaction.openOuter()) {
                 this.energyStorage.extract(ENERGY_CRAFTING_AMOUNT, transaction);
@@ -235,7 +228,7 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
     }
 
     private boolean hasRecipe() {
-        Optional<RecipeEntry<RecyclerRecipe>> recipe = getCurrentRecipe();
+        Optional<RecipeEntry<AlloySmelterRecipe>> recipe = getCurrentRecipe();
 
         if (recipe.isEmpty()){
             return false;
@@ -249,11 +242,12 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
     }
 
     private boolean hasEnoughEnergy(int amount) {
-        return amount >= this.energyStorage.amount;
+        return this.energyStorage.amount >= amount;
     }
 
-    private Optional<RecipeEntry<RecyclerRecipe>> getCurrentRecipe() {
-        return this.getWorld().getRecipeManager().getFirstMatch(ModRecipes.RECYCLER_TYPE, new RecyclerRecipeInput(inventory.get(INPUT_SLOT)), this.world);
+    private Optional<RecipeEntry<AlloySmelterRecipe>> getCurrentRecipe() {
+        assert this.getWorld() != null;
+        return this.getWorld().getRecipeManager().getFirstMatch(ModRecipes.ALLOYING_TYPE, new AlloySmelterRecipeInput(inventory.get(INPUT_SLOT_0), inventory.get(INPUT_SLOT_1), inventory.get(INPUT_SLOT_2)), this.world);
     }
 
     private boolean canInsertItemIntoOutputSlot(ItemStack output) {

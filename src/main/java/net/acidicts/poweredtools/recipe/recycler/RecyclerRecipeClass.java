@@ -1,6 +1,7 @@
-package net.acidicts.poweredtools.recipe;
+package net.acidicts.poweredtools.recipe.recycler;
 
 import net.acidicts.poweredtools.block.ModBlocks;
+import net.acidicts.poweredtools.recipe.ModRecipes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.AbstractCookingRecipe;
 import net.minecraft.recipe.Ingredient;

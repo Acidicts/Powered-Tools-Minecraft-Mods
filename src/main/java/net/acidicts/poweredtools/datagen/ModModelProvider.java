@@ -43,6 +43,7 @@ public class ModModelProvider extends FabricModelProvider {
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
 
         blockStateModelGenerator.registerNorthDefaultHorizontalRotation(ModBlocks.COAL_GENERATOR);
+        blockStateModelGenerator.registerNorthDefaultHorizontalRotation(ModBlocks.ALLOY_SMELTER);
     }
 
     @Override

@@ -3,7 +3,8 @@ package net.acidicts.poweredtools.recipe;
 import net.minecraft.recipe.book.RecipeCategory;
 
 public enum ModRecipeCategory {
-    RECYCLING("recycling");
+    RECYCLING("recycling"),
+    ALLOYING("alloying");
 
     private final String name;
 

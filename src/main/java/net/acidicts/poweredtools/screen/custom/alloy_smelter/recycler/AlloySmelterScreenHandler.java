@@ -1,6 +1,6 @@
-package net.acidicts.poweredtools.screen.custom.recycler;
+package net.acidicts.poweredtools.screen.custom.alloy_smelter.recycler;
 
-import net.acidicts.poweredtools.block.entity.custom.RecyclerBlockEntity;
+import net.acidicts.poweredtools.block.entity.custom.AlloySmelterBlockEntity;
 import net.acidicts.poweredtools.screen.ModScreenHandlers;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,27 +13,29 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.math.BlockPos;
 
-public class RecyclerScreenHandler extends ScreenHandler {
+public class AlloySmelterScreenHandler extends ScreenHandler {
     private final Inventory inventory;
     private final PropertyDelegate propertyDelegate;
-    public final RecyclerBlockEntity blockEntity;
+    public final AlloySmelterBlockEntity blockEntity;
 
-    public RecyclerScreenHandler(int syncId, PlayerInventory inventory, BlockPos pos) {
+    public AlloySmelterScreenHandler(int syncId, PlayerInventory inventory, BlockPos pos) {
         this(syncId, inventory, inventory.player.getWorld().getBlockEntity(pos), new ArrayPropertyDelegate(2));
     }
 
-    public RecyclerScreenHandler(int syncId, PlayerInventory playerInventory,
-                                 BlockEntity blockEntity, PropertyDelegate arrayPropertyDelegate) {
+    public AlloySmelterScreenHandler(int syncId, PlayerInventory playerInventory,
+                                     BlockEntity blockEntity, PropertyDelegate arrayPropertyDelegate) {
         super(ModScreenHandlers.ALLOY_SMELTER_SCREEN_HANDLER, syncId);
-        checkSize((Inventory) blockEntity, 4);
+        checkSize((Inventory) blockEntity, 5);
         this.inventory = (Inventory) blockEntity;
         this.propertyDelegate = arrayPropertyDelegate;
-        this.blockEntity = (RecyclerBlockEntity) blockEntity;
+        this.blockEntity = (AlloySmelterBlockEntity) blockEntity;
 
-        this.addSlot(new Slot(inventory, 0, 8, 62));
-        this.addSlot(new Slot(inventory, 1, 54, 34));
-        this.addSlot(new Slot(inventory, 2, 104, 34));
-        this.addSlot(new Slot(inventory, 3, 152, 62));
+        this.addSlot(new Slot(inventory, 0, 20, 12));
+        this.addSlot(new Slot(inventory, 1, 20, 32));
+        this.addSlot(new Slot(inventory, 2, 20, 52));
+
+        this.addSlot(new Slot(inventory, 3, 120, 33));
+        this.addSlot(new Slot(inventory, 4, 152, 62));
 
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);

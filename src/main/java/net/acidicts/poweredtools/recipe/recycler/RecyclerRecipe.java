@@ -1,8 +1,9 @@
-package net.acidicts.poweredtools.recipe;
+package net.acidicts.poweredtools.recipe.recycler;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.acidicts.poweredtools.block.ModBlocks;
+import net.acidicts.poweredtools.recipe.ModRecipes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;

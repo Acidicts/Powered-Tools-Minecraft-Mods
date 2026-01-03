@@ -1,5 +1,5 @@
 {
-  "parent": "builtin/entity",
+  "parent": "poweredtools:block/open_charger",
   "display": {
     "gui": {
       "rotation": [30, 45, 0],
@@ -33,7 +33,7 @@
     }
   },
   "textures": {
-    "particle": "poweredtools:item/charger"
+    "particle": "poweredtools:item/open_charger"
   }
 }
 

@@ -1,6 +1,7 @@
 package net.acidicts.poweredtools.block;
 
 import net.acidicts.poweredtools.PoweredTools;
+import net.acidicts.poweredtools.block.custom.AlloySmelter;
 import net.acidicts.poweredtools.block.custom.Charger;
 import net.acidicts.poweredtools.block.custom.CoalGenerator;
 import net.acidicts.poweredtools.block.custom.Recycler;
@@ -19,9 +20,14 @@ public class ModBlocks {
 
     public static final Block CHARGER = registerBlock("charger",
             new Charger(AbstractBlock.Settings.create().nonOpaque().requiresTool().strength(2f).resistance(12f)));
+    public static final Block OPEN_CHARGER = registerBlock("open_charger",
+            new Block(AbstractBlock.Settings.create().nonOpaque().requiresTool().strength(2f).resistance(12f)));
 
     public static final Block RECYCLER = registerBlock("recycler",
             new Recycler(AbstractBlock.Settings.create().nonOpaque().requiresTool().strength(2f).resistance(12f)));
+
+    public static final Block ALLOY_SMELTER = registerBlock("alloy_smelter",
+            new AlloySmelter(AbstractBlock.Settings.create().nonOpaque().requiresTool().strength(2f).resistance(12f)));
 
     public static final Block COAL_GENERATOR = registerBlock("coal_generator",
             new CoalGenerator(AbstractBlock.Settings.create().nonOpaque().requiresTool().strength(2f).resistance(12f)));
@@ -43,8 +49,10 @@ public class ModBlocks {
     }
 
     private static void registerBlockItem(String name, Block block) {
-        Registry.register(Registries.ITEM, Identifier.of(PoweredTools.MOD_ID, name),
-                new BlockItem(block, new Item.Settings()));
+        if (name.equals("open_charger")) {
+            return;
+        }
+        Registry.register(Registries.ITEM, Identifier.of(PoweredTools.MOD_ID, name), new BlockItem(block, new Item.Settings()));
     }
 
     public static void registerBlocks() {

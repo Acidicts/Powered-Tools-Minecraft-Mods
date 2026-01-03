@@ -1,4 +1,4 @@
-package net.acidicts.poweredtools.recipe;
+package net.acidicts.poweredtools.recipe.recycler;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.input.RecipeInput;

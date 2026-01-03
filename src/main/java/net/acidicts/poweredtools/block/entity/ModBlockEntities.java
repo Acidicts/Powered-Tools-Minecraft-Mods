@@ -3,6 +3,7 @@ package net.acidicts.poweredtools.block.entity;
 import net.acidicts.poweredtools.PoweredTools;
 import net.acidicts.poweredtools.block.ModBlocks;
 import net.acidicts.poweredtools.block.custom.Recycler;
+import net.acidicts.poweredtools.block.entity.custom.AlloySmelterBlockEntity;
 import net.acidicts.poweredtools.block.entity.custom.ChargerBlockEntity;
 import net.acidicts.poweredtools.block.entity.custom.CoalGeneratorBlockEntity;
 import net.acidicts.poweredtools.block.entity.custom.RecyclerBlockEntity;
@@ -34,12 +35,20 @@ public class ModBlockEntities {
                     BlockEntityType.Builder.create(CoalGeneratorBlockEntity::new, ModBlocks.COAL_GENERATOR).build(null)
             );
 
+    public static final BlockEntityType<AlloySmelterBlockEntity> ALLOY_SMELTER_BLOCK_ENTITY =
+            Registry.register(
+                    Registries.BLOCK_ENTITY_TYPE,
+                    Identifier.of(PoweredTools.MOD_ID, "alloy_smelter_block_entity"),
+                    BlockEntityType.Builder.create(AlloySmelterBlockEntity::new, ModBlocks.ALLOY_SMELTER).build(null)
+            );
+
 
     public static void registerBlockEntities() {
         PoweredTools.LOGGER.info("Registering Block Entities for {}", PoweredTools.MOD_ID);
 
         EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, COAL_GENERATOR_BLOCK_ENTITY);
         EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, RECYCLER_BLOCK_ENTITY);
+        EnergyStorage.SIDED.registerForBlockEntity((blockEntity, direction) -> blockEntity.energyStorage, ALLOY_SMELTER_BLOCK_ENTITY);
     }
 }
 
