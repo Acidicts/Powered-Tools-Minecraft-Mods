@@ -171,19 +171,15 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
     private void resetBurning() {
         isBurning = false;
         fuelItem = null;
-        this.burnProgress = maxBurnProgress;
+        this.burnProgress = 0;
     }
 
     private boolean currentFuelDoneBurning() {
-        return this.burnProgress <= (int) 0 ;
+        return this.burnProgress <= 0;
     }
 
     private void increaseBurnTimer() {
-        int time = burnables.getEnergyValue(this.getStack(INPUT_SLOT).getItem(), 1) / ENERGY_TRANSFER_AMOUNT;
-        int diff = burnables.getEnergyValue(this.getStack(INPUT_SLOT).getItem(), time);
-        if (energyStorage.amount + diff <= energyStorage.capacity) {
-            burnProgress++;
-        }
+        burnProgress--;
     }
 
     private boolean hasRoomForEnergyTick() {
@@ -197,6 +193,12 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
 
     private void startBurning() {
         fuelItem = this.getStack(INPUT_SLOT).getItem();
+        int totalEnergy = burnables.getEnergyValue(fuelItem, 1);
+        this.maxBurnProgress = totalEnergy / ENERGY_TRANSFER_AMOUNT;
+        if (this.maxBurnProgress == 0) {
+            this.maxBurnProgress = 1;
+        }
+        this.burnProgress = this.maxBurnProgress;
         this.removeStack(INPUT_SLOT, 1);
         isBurning = true;
     }
@@ -206,7 +208,6 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
     }
 
     private boolean hasFuelItemInSlot() {
-        this.burnProgress = burnables.getEnergyValue(this.getStack(INPUT_SLOT).getItem(), 1) / ENERGY_TRANSFER_AMOUNT;
         return burnables.getEnergyValue(this.getStack(INPUT_SLOT).getItem(), 1) != 0;
     }
 

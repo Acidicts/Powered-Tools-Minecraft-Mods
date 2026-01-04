@@ -1,6 +1,7 @@
 package net.acidicts.poweredtools.screen.custom.coal_generator;
 
 import net.acidicts.poweredtools.block.entity.custom.CoalGeneratorBlockEntity;
+import net.acidicts.poweredtools.data.Burnables;
 import net.acidicts.poweredtools.screen.ModScreenHandlers;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,6 +19,7 @@ public class CoalGeneratorScreenHandler extends ScreenHandler {
     private final Inventory inventory;
     private final PropertyDelegate propertyDelegate;
     public final CoalGeneratorBlockEntity blockEntity;
+    public static final Burnables burnables = new Burnables();
 
     public CoalGeneratorScreenHandler(int syncId, PlayerInventory playerInventory, BlockPos pos) {
         this(syncId, playerInventory, playerInventory.player.getWorld().getBlockEntity(pos),
@@ -31,7 +33,12 @@ public class CoalGeneratorScreenHandler extends ScreenHandler {
         this.blockEntity = (CoalGeneratorBlockEntity) blockEntity;
         this.propertyDelegate = arrayPropertyDelegate;
 
-        this.addSlot(new Slot(inventory, 0, 80, 35));
+        this.addSlot(new Slot(inventory, 0, 80, 35){
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return burnables.getEnergyValue(stack.getItem(), 1) != 0;
+            }
+        });
 
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);
