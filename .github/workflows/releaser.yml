@@ -3,7 +3,7 @@ name: Create Release from JAR
 on:
   push:
     branches: 
-      - main  # Change to 'master' or your default branch if different
+      - master  # Change to 'master' or your default branch if different
     paths:
       - 'build/libs/powered-tools-*.jar'
   workflow_dispatch:  # Allows manual triggering
