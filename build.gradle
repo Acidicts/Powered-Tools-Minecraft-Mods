@@ -18,6 +18,10 @@ fabricApi {
 
 repositories {
     maven {
+        name = "Fabric"
+        url = "https://maven.fabricmc.net/"
+    }
+    maven {
         name = "GeckoLib"
         url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
 
