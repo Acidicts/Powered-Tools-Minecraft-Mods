@@ -23,7 +23,6 @@ atlassian-ide-plugin.xml
 *.ctxt
 
 # Package Files #
-*.jar
 *.war
 *.nar
 *.ear
@@ -101,7 +100,15 @@ $RECYCLE.BIN/
 *.lnk
 
 .gradle
-build/
+build/classes
+build/datagen
+build/devlibs
+build/generated
+build/loom-cache
+build/processIncludeJars
+build/reports
+build/resources
+build/tmp
 
 # Ignore Gradle GUI config
 gradle-app.setting

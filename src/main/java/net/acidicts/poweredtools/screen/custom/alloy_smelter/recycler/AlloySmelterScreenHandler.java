@@ -41,6 +41,7 @@ public class AlloySmelterScreenHandler extends ScreenHandler {
         addPlayerHotbar(playerInventory);
 
         addProperties(arrayPropertyDelegate);
+
     }
 
     public boolean isCrafting() {
