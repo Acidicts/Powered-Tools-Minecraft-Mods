@@ -1,16 +1,21 @@
 package net.acidicts.poweredtools.item.custom;
 
 import net.acidicts.poweredtools.item.ModToolMaterials;
+import net.acidicts.poweredtools.screen.custom.power_pickaxe.PoweredPickaxeScreenHandler;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
@@ -97,70 +102,41 @@ public class Powered_Pickaxe extends PickaxeItem {
 
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        ItemStack pickaxeStack = user.getStackInHand(hand);
-        ItemStack offhandStack = user.getOffHandStack();
-
-
-
-        if (user.isSneaking()) {
-            if (!world.isClient) {
-                NbtCompound nbt = getBatteryData(pickaxeStack);
-                if (nbt.getBoolean("battery_installed")) {
-                    ItemStack extractedBattery = extractBatteryAsItem(pickaxeStack);
-
-                    NbtCompound pickaxeNbt = new NbtCompound();
-                    pickaxeNbt.putBoolean("battery_installed", false);
-                    pickaxeNbt.putString("battery_tier", "");
-                    pickaxeNbt.putInt("battery_capacity", 0);
-                    pickaxeNbt.putInt("battery_transfer_rate", 0);
-                    pickaxeNbt.putInt("battery_lifespan", 0);
-                    pickaxeNbt.putFloat("battery_decay_rate", 0f);
-                    pickaxeNbt.putInt("battery_cycles", 0);
-                    pickaxeNbt.putInt("battery_charge", 0);
-                    setBatteryData(pickaxeStack, pickaxeNbt);
-
-                    if (!user.getInventory().insertStack(extractedBattery)) {
-                        user.dropItem(extractedBattery, false);
-                    }
-
-                    user.sendMessage(Text.literal("Battery removed!").formatted(Formatting.YELLOW), true);
-                } else {
-                    user.sendMessage(Text.literal("No battery to remove!").formatted(Formatting.RED), true);
-                }
-            }
-            return TypedActionResult.success(pickaxeStack, world.isClient());
-        }
-
-        if (offhandStack.getItem() instanceof BatteryItem batteryItem) {
-            if (!world.isClient) {
-                NbtCompound nbt = getBatteryData(pickaxeStack);
-                if (nbt.getBoolean("battery_installed")) {
-                    ItemStack oldBatteryStack = extractBatteryAsItem(pickaxeStack);
-
-                    installBattery(pickaxeStack, offhandStack, batteryItem);
-
-                    offhandStack.decrement(1);
-
-                    if ((!user.getInventory().insertStack(oldBatteryStack))) {
-                        user.dropItem(oldBatteryStack, false);
-                    }
-                } else {
-                    installBattery(pickaxeStack, offhandStack, batteryItem);
-
-                    offhandStack.decrement(1);
+        ItemStack stack = user.getStackInHand(hand);
+        if (hand == Hand.MAIN_HAND && !world.isClient() && user.isSneaking()) {
+            user.openHandledScreen(new ExtendedScreenHandlerFactory<ItemStack>() {
+                @Override
+                public ItemStack getScreenOpeningData(ServerPlayerEntity player) {
+                    return stack;
                 }
 
-                user.sendMessage(Text.literal("Battery swapped!").formatted(Formatting.GREEN), true);
-            }
-            return TypedActionResult.success(pickaxeStack, world.isClient());
-        } else if (offhandStack.getItem() instanceof BrokenBatteryItem) {
-            user.sendMessage(Text.of("Your battery is broken and cannot be used."), true);
-        }
+                @Override
+                public Text getDisplayName() {
+                    return stack.getName();
+                }
 
-        return TypedActionResult.pass(pickaxeStack);
+                @Override
+                public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
+                    return new PoweredPickaxeScreenHandler(syncId, playerInventory, stack);
+                }
+            });
+            return TypedActionResult.success(stack);
+        }
+        return super.use(world, user, hand);
     }
 
-    private ItemStack extractBatteryAsItem(ItemStack pickaxeStack) {
+    public boolean isBatteryInstalled(ItemStack stack) {
+        NbtCompound nbt = getBatteryData(stack);
+        return nbt.getBoolean("battery_installed");
+    }
+
+    public void removeBattery(ItemStack stack) {
+        NbtCompound nbt = getBatteryData(stack);
+        nbt.putBoolean("battery_installed", false);
+        setBatteryData(stack, nbt);
+    }
+
+    public ItemStack extractBatteryAsItem(ItemStack pickaxeStack) {
         NbtCompound pickaxeNbt = getBatteryData(pickaxeStack);
 
         String tier = pickaxeNbt.getString("battery_tier");
@@ -187,7 +163,7 @@ public class Powered_Pickaxe extends PickaxeItem {
         };
     }
 
-    private void installBattery(ItemStack pickaxeStack, ItemStack batteryStack, BatteryItem batteryItem) {
+    public void installBattery(ItemStack pickaxeStack, ItemStack batteryStack, BatteryItem batteryItem) {
         NbtCompound pickaxeNbt = new NbtCompound();
 
         pickaxeNbt.putString("battery_tier", (String) batteryItem.getTier(batteryStack, "string"));
@@ -305,7 +281,6 @@ public class Powered_Pickaxe extends PickaxeItem {
         setBatteryData(stack, nbt);
     }
 
-    @SuppressWarnings("unused")
     public void recharge(ItemStack stack, int amount) {
         int currentCharge = getCurrentCharge(stack);
         int maxCapacity = getMaxCapacity(stack);
@@ -344,11 +319,10 @@ public class Powered_Pickaxe extends PickaxeItem {
                     remainingCycles > lifespan * 0.5 ? Formatting.GREEN :
                             remainingCycles > lifespan * 0.25 ? Formatting.YELLOW : Formatting.RED
             ));
-            tooltip.add(Text.literal("Hold battery in offhand + right-click to swap").formatted(Formatting.GRAY).formatted(Formatting.ITALIC));
-            tooltip.add(Text.literal("Sneak + right-click to remove battery").formatted(Formatting.GRAY).formatted(Formatting.ITALIC));
+            tooltip.add(Text.literal("Sneak + right-click to open GUI").formatted(Formatting.GRAY).formatted(Formatting.ITALIC));
         } else {
             tooltip.add(Text.literal("No battery installed").formatted(Formatting.RED));
-            tooltip.add(Text.literal("Hold battery in offhand + right-click to install").formatted(Formatting.GRAY).formatted(Formatting.ITALIC));
+            tooltip.add(Text.literal("Sneak + right-click to open GUI").formatted(Formatting.GRAY).formatted(Formatting.ITALIC));
         }
     }
 }

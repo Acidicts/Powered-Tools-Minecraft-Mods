@@ -1,11 +1,9 @@
 package net.acidicts.poweredtools.block.custom;
 
 import com.mojang.serialization.MapCodec;
-import net.acidicts.poweredtools.PoweredTools;
 import net.acidicts.poweredtools.block.entity.custom.ChargerBlockEntity;
 import net.acidicts.poweredtools.item.ModItems;
 import net.acidicts.poweredtools.item.custom.BatteryItem;
-import net.acidicts.poweredtools.item.custom.Powered_Pickaxe;
 import net.acidicts.poweredtools.particle.ModParticles;
 import net.acidicts.poweredtools.tags.ModTags;
 import net.minecraft.block.*;
@@ -15,6 +13,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.text.Text;
@@ -133,33 +132,42 @@ public class Charger extends BlockWithEntity {
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof ChargerBlockEntity) {
-            if (!((ChargerBlockEntity) blockEntity).hasSpaceToOpen() && !((ChargerBlockEntity) blockEntity).hasOpened()) {
+        if (blockEntity instanceof ChargerBlockEntity chargerBlockEntity) {
+            if (!chargerBlockEntity.hasSpaceToOpen() && !chargerBlockEntity.hasOpened()) {
                 player.sendMessage(Text.literal("Place the Charger Without Blocks around it to open it!").formatted(Formatting.RED), true);
                 return ActionResult.FAIL;
             }
+            if (chargerBlockEntity.hasOpened()) {
+                createParticles(world, pos);
+            }
         }
-        if (((ChargerBlockEntity) blockEntity).hasOpened()) {
-            createParticles(world, pos);
-        }
-        if (world.isClient && player.getMainHandStack().isIn(ModTags.Items.chargeable)) {
-            var stack = player.getMainHandStack();
 
-
-            if (stack.getItem() instanceof BatteryItem batteryItem) {
-                int maxCapacity = batteryItem.getMaxCapacity(stack);
-                int currentCharge = batteryItem.getCurrentCharge(stack);
-                int rechargeAmount = maxCapacity - currentCharge;
-
+        ItemStack stack = player.getMainHandStack();
+        if (stack.isIn(ModTags.Items.chargeable) && stack.getItem() instanceof BatteryItem batteryItem) {
+            if (!world.isClient) {
                 if (batteryItem.isBroken(stack)) {
                     int slot = player.getInventory().getSlotWithStack(stack);
                     player.getInventory().removeStack(slot);
                     Item brokenBattery = ModItems.getBrokenBatteryByTier((String) batteryItem.getTier(stack, "string"));
                     player.getInventory().insertStack(brokenBattery.getDefaultStack());
+                    return ActionResult.SUCCESS;
                 }
+
+                int maxCapacity = batteryItem.getMaxCapacity(stack);
+                int currentCharge = batteryItem.getCurrentCharge(stack);
+                int rechargeAmount = maxCapacity - currentCharge;
 
                 if (rechargeAmount > 0) {
                     batteryItem.recharge(stack, rechargeAmount);
+                    return ActionResult.SUCCESS;
+                }
+            } else {
+                if (batteryItem.isBroken(stack)) {
+                    return ActionResult.SUCCESS;
+                }
+                int maxCapacity = batteryItem.getMaxCapacity(stack);
+                int currentCharge = batteryItem.getCurrentCharge(stack);
+                if (maxCapacity - currentCharge > 0) {
                     return ActionResult.SUCCESS;
                 }
             }

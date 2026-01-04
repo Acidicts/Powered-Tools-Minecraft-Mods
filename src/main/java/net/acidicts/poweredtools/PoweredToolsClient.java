@@ -6,6 +6,7 @@ import net.acidicts.poweredtools.particle.ModParticles;
 import net.acidicts.poweredtools.screen.ModScreenHandlers;
 import net.acidicts.poweredtools.screen.custom.alloy_smelter.recycler.AlloySmelterScreen;
 import net.acidicts.poweredtools.screen.custom.coal_generator.CoalGeneratorScreen;
+import net.acidicts.poweredtools.screen.custom.power_pickaxe.PoweredPickaxeScreen;
 import net.acidicts.poweredtools.screen.custom.recycler.RecyclerScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
@@ -21,6 +22,7 @@ public class PoweredToolsClient implements ClientModInitializer {
         HandledScreens.register(ModScreenHandlers.RECYCLER_SCREEN_HANDLER, RecyclerScreen::new);
         HandledScreens.register(ModScreenHandlers.ALLOY_SMELTER_SCREEN_HANDLER, AlloySmelterScreen::new);
         HandledScreens.register(ModScreenHandlers.COAL_GENERATOR_SCREEN_HANDLER, CoalGeneratorScreen::new);
+        HandledScreens.register(ModScreenHandlers.POWERED_PICKAXE_SCREEN_HANDLER, PoweredPickaxeScreen::new);
 
         ParticleFactoryRegistry.getInstance().register(ModParticles.ELECTRIC_SPARK, FlameParticle.Factory::new);
     }
