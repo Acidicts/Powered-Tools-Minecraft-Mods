@@ -187,6 +187,9 @@ public class BatteryItem extends Item {
 
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+        if (world.isClient) {
+            return;
+        }
         NbtCompound nbt = stack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
         if (!nbt.contains("tier") || !nbt.contains("cycles")) {
             initializeBatteryNbt(stack);

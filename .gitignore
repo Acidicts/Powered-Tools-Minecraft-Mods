@@ -103,6 +103,7 @@ $RECYCLE.BIN/
 build/classes
 build/datagen
 build/devlibs
+build/libs
 build/generated
 build/loom-cache
 build/processIncludeJars
