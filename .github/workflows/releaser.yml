@@ -1,0 +1,122 @@
+name: Create Release from JAR
+
+on:
+  push:
+    branches: 
+      - main  # Change to 'master' or your default branch if different
+    paths:
+      - 'build/libs/powered-tools-*.jar'
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  release:
+    runs-on:  ubuntu-latest
+    permissions: 
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all tags
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      
+      - name: Build with Gradle
+        run: ./gradlew build
+      
+      - name: Find JAR and extract version
+        id: jar_info
+        run: |
+          # Find the JAR file
+          JAR_FILE=$(find build/libs -name "powered-tools-*.jar" ! -name "*-sources. jar" ! -name "*-dev.jar" -type f | head -n 1)
+          
+          if [ -z "$JAR_FILE" ]; then
+            echo "Error: No JAR file found"
+            exit 1
+          fi
+          
+          JAR_NAME=$(basename "$JAR_FILE")
+          
+          # Extract version from filename (powered-tools-X.X.X.jar)
+          VERSION=$(echo "$JAR_NAME" | sed -n 's/powered-tools-\(.*\)\.jar/\1/p')
+          
+          if [ -z "$VERSION" ]; then
+            echo "Error: Could not extract version from filename"
+            exit 1
+          fi
+          
+          TAG_NAME="v$VERSION"
+          
+          echo "jar_file=$JAR_FILE" >> $GITHUB_OUTPUT
+          echo "jar_name=$JAR_NAME" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          
+          echo "Found JAR: $JAR_NAME"
+          echo "Extracted version: $VERSION"
+          echo "Tag name: $TAG_NAME"
+      
+      - name: Check if tag exists
+        id: check_tag
+        run: |
+          if git rev-parse "${{ steps.jar_info.outputs.tag_name }}" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Tag ${{ steps.jar_info. outputs.tag_name }} already exists"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "Tag ${{ steps.jar_info.outputs.tag_name }} does not exist"
+          fi
+      
+      - name: Create and push tag
+        if: steps. check_tag.outputs.exists == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply. github.com"
+          git tag -a "${{ steps.jar_info.outputs.tag_name }}" -m "Release ${{ steps.jar_info.outputs. version }}"
+          git push origin "${{ steps.jar_info.outputs.tag_name }}"
+      
+      - name: Create Release
+        if: steps.check_tag.outputs.exists == 'false'
+        id:  create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with: 
+          tag_name: ${{ steps.jar_info.outputs.tag_name }}
+          release_name:  Powered Tools ${{ steps.jar_info.outputs.version }}
+          body: |
+            ## Powered Tools v${{ steps.jar_info. outputs.version }}
+            
+            ### 📦 Installation
+            1. Download `${{ steps.jar_info.outputs.jar_name }}` below
+            2. Place it in your Minecraft `mods` folder
+            3. Launch Minecraft with Forge/Fabric
+            
+            ### ✨ Changes
+            - See commit history for changes in this release
+            
+            ---
+            *Auto-generated release from ${{ steps.jar_info.outputs.jar_name }}*
+          draft: false
+          prerelease: false
+      
+      - name: Upload Release Asset
+        if:  steps.check_tag.outputs. exists == 'false'
+        uses: actions/upload-release-asset@v1
+        env: 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps. create_release.outputs.upload_url }}
+          asset_path:  ${{ steps.jar_info. outputs.jar_file }}
+          asset_name: ${{ steps.jar_info.outputs.jar_name }}
+          asset_content_type: application/java-archive
+      
+      - name: Skip release (tag exists)
+        if: steps.check_tag.outputs.exists == 'true'
+        run:  |
+          echo "Release for version ${{ steps.jar_info. outputs.version }} already exists.  Skipping."
