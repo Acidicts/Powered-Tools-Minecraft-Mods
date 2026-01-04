@@ -1,70 +1,85 @@
-name: Build and Release Mod
+name: Auto-Release on Version Change
 
 on:
-  workflow_dispatch: # Allows manual triggering from the Actions tab
+  push:
+    branches:
+      - master
+    paths:
+      - 'gradle.properties' # Only triggers if this file changes
+  workflow_dispatch: # Allows you to still run it manually if needed
 
 permissions:
-  contents: write # Required to create tags and releases
+  contents: write
 
 jobs:
-  build-and-release:
+  check-and-release:
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetches history so we can verify tags accurately
+
+      - name: Extract Version from gradle.properties
+        id: get_version
+        run: |
+          VERSION=$(grep "mod_version" gradle.properties | cut -d'=' -f2 | tr -d '[:space:]')
+          echo "Detected version: $VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Check if Tag Exists
+        id: check_tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG_NAME="v${{ env.VERSION }}"
+          echo "Checking for tag: $TAG_NAME"
+          
+          # Check if the tag exists in the remote repository
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG_NAME" >/dev/null 2>&1; then
+            echo "Tag $TAG_NAME already exists."
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Tag $TAG_NAME does not exist. Proceeding with release."
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Setup Java 21
+        if: steps.check_tag.outputs.exists == 'false'
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
 
       - name: Setup Gradle
+        if: steps.check_tag.outputs.exists == 'false'
         uses: gradle/actions/setup-gradle@v4
 
       - name: Make gradlew executable
+        if: steps.check_tag.outputs.exists == 'false'
         run: chmod +x gradlew
 
-      - name: Extract Version from gradle.properties
-        id: get_version
-        run: |
-          # Finds the line starting with mod_version, splits by =, and cleans whitespace
-          VERSION=$(grep "mod_version" gradle.properties | cut -d'=' -f2 | tr -d '[:space:]')
-          echo "Detected version: $VERSION"
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      - name: Configure Git User
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Create and Push Tag
-        run: |
-          TAG="v${{ env.VERSION }}"
-          
-          if git rev-parse "$TAG" >/dev/null 2>&1; then
-            echo "Tag $TAG already exists. Skipping tag creation."
-          else
-            echo "Creating tag $TAG"
-            git tag "$TAG"
-            git push origin "$TAG"
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build with Gradle
+        if: steps.check_tag.outputs.exists == 'false'
         run: ./gradlew build
 
+      - name: Create and Push Tag
+        if: steps.check_tag.outputs.exists == 'false'
+        run: |
+          TAG="v${{ env.VERSION }}"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git tag "$TAG"
+          git push origin "$TAG"
+
       - name: Create GitHub Release
+        if: steps.check_tag.outputs.exists == 'false'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.VERSION }}
           name: Release v${{ env.VERSION }}
-          draft: false
-          prerelease: false
-          # Uploads all jars from build/libs/ excluding sources/dev jars if you prefer
-          # This pattern grabs everything; you can adjust it to build/libs/*-all.jar etc.
           files: build/libs/*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
