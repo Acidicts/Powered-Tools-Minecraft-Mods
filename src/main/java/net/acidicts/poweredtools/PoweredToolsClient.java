@@ -4,7 +4,7 @@ import net.acidicts.poweredtools.block.entity.ModBlockEntities;
 import net.acidicts.poweredtools.block.entity.renderer.charger.ChargerBlockRenderer;
 import net.acidicts.poweredtools.particle.ModParticles;
 import net.acidicts.poweredtools.screen.ModScreenHandlers;
-import net.acidicts.poweredtools.screen.custom.alloy_smelter.recycler.AlloySmelterScreen;
+import net.acidicts.poweredtools.screen.custom.alloy_smelter.AlloySmelterScreen;
 import net.acidicts.poweredtools.screen.custom.coal_generator.CoalGeneratorScreen;
 import net.acidicts.poweredtools.screen.custom.power_pickaxe.PoweredPickaxeScreen;
 import net.acidicts.poweredtools.screen.custom.recycler.RecyclerScreen;

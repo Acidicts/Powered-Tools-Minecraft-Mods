@@ -1,4 +1,4 @@
-package net.acidicts.poweredtools.screen.custom.alloy_smelter.recycler;
+package net.acidicts.poweredtools.screen.custom.alloy_smelter;
 
 import net.acidicts.poweredtools.block.entity.custom.AlloySmelterBlockEntity;
 import net.acidicts.poweredtools.screen.ModScreenHandlers;
@@ -25,7 +25,7 @@ public class AlloySmelterScreenHandler extends ScreenHandler {
     public AlloySmelterScreenHandler(int syncId, PlayerInventory playerInventory,
                                      BlockEntity blockEntity, PropertyDelegate arrayPropertyDelegate) {
         super(ModScreenHandlers.ALLOY_SMELTER_SCREEN_HANDLER, syncId);
-        checkSize((Inventory) blockEntity, 5);
+        checkSize((Inventory) blockEntity, 4);
         this.inventory = (Inventory) blockEntity;
         this.propertyDelegate = arrayPropertyDelegate;
         this.blockEntity = (AlloySmelterBlockEntity) blockEntity;
@@ -34,7 +34,12 @@ public class AlloySmelterScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(inventory, 1, 20, 32));
         this.addSlot(new Slot(inventory, 2, 20, 52));
 
-        this.addSlot(new Slot(inventory, 3, 120, 33));
+        this.addSlot(new Slot(inventory, 3, 120, 33){
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return false;
+            }
+        });
         this.addSlot(new Slot(inventory, 4, 152, 62));
 
         addPlayerInventory(playerInventory);

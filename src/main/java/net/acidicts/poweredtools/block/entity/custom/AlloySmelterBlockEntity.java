@@ -6,7 +6,7 @@ import net.acidicts.poweredtools.block.entity.ModBlockEntities;
 import net.acidicts.poweredtools.recipe.ModRecipes;
 import net.acidicts.poweredtools.recipe.alloy_smelter.AlloySmelterRecipe;
 import net.acidicts.poweredtools.recipe.alloy_smelter.AlloySmelterRecipeInput;
-import net.acidicts.poweredtools.screen.custom.alloy_smelter.recycler.AlloySmelterScreenHandler;
+import net.acidicts.poweredtools.screen.custom.alloy_smelter.AlloySmelterScreenHandler;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.BlockState;

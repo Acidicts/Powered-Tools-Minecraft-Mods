@@ -13,12 +13,14 @@ import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.inventory.InventoryChangedListener;
 import team.reborn.energy.api.EnergyStorage;
 
 public class PoweredPickaxeScreenHandler extends ScreenHandler {
     private final Inventory inventory;
     private final PropertyDelegate propertyDelegate;
     private final ItemStack stack;
+    private final InventoryChangedListener inventoryChangeListener;
 
     public PoweredPickaxeScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, playerInventory.getMainHandStack());
@@ -29,13 +31,34 @@ public class PoweredPickaxeScreenHandler extends ScreenHandler {
         this.stack = stack;
         this.inventory = new SimpleInventory(4);
         this.propertyDelegate = new ArrayPropertyDelegate(2);
+        this.inventoryChangeListener = this::onInventoryChanged;
 
         checkSize(inventory, 4);
 
-        this.addSlot(new Slot(inventory, 0, 10, 9));
-        this.addSlot(new Slot(inventory, 1, 10, 33));
-        this.addSlot(new Slot(inventory, 2, 10, 57));
-        this.addSlot(new Slot(inventory, 3, 80, 35));
+        this.addSlot(new Slot(inventory, 0, 10, 9){
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return false;
+            }
+        });
+        this.addSlot(new Slot(inventory, 1, 10, 33){
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return false;
+            }
+        });
+        this.addSlot(new Slot(inventory, 2, 10, 57) {
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return false;
+            }
+        });
+        this.addSlot(new Slot(inventory, 3, 80, 35) {
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return stack.getItem() instanceof BatteryItem;
+            }
+        });
 
         if (stack.getItem() instanceof Powered_Pickaxe pickaxe) {
             if (pickaxe.isBatteryInstalled(stack)) {
@@ -46,7 +69,7 @@ public class PoweredPickaxeScreenHandler extends ScreenHandler {
         }
 
         if (inventory instanceof SimpleInventory simpleInventory) {
-            simpleInventory.addListener(this::onInventoryChanged);
+            simpleInventory.addListener(inventoryChangeListener);
         }
 
         addPlayerInventory(playerInventory);
@@ -142,7 +165,7 @@ public class PoweredPickaxeScreenHandler extends ScreenHandler {
     @Override
     public void onClosed(PlayerEntity player) {
         if (inventory instanceof SimpleInventory simpleInventory) {
-            simpleInventory.removeListener(this::onInventoryChanged);
+            simpleInventory.removeListener(inventoryChangeListener);
         }
         // Clear the battery slot so it doesn't get dropped (it's saved in the pickaxe)
         inventory.setStack(3, ItemStack.EMPTY);

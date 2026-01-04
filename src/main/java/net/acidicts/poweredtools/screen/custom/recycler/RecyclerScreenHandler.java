@@ -1,6 +1,7 @@
 package net.acidicts.poweredtools.screen.custom.recycler;
 
 import net.acidicts.poweredtools.block.entity.custom.RecyclerBlockEntity;
+import net.acidicts.poweredtools.item.custom.BatteryItem;
 import net.acidicts.poweredtools.screen.ModScreenHandlers;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,7 +25,7 @@ public class RecyclerScreenHandler extends ScreenHandler {
 
     public RecyclerScreenHandler(int syncId, PlayerInventory playerInventory,
                                  BlockEntity blockEntity, PropertyDelegate arrayPropertyDelegate) {
-        super(ModScreenHandlers.ALLOY_SMELTER_SCREEN_HANDLER, syncId);
+        super(ModScreenHandlers.RECYCLER_SCREEN_HANDLER, syncId);
         checkSize((Inventory) blockEntity, 4);
         this.inventory = (Inventory) blockEntity;
         this.propertyDelegate = arrayPropertyDelegate;
@@ -32,8 +33,18 @@ public class RecyclerScreenHandler extends ScreenHandler {
 
         this.addSlot(new Slot(inventory, 0, 8, 62));
         this.addSlot(new Slot(inventory, 1, 54, 34));
-        this.addSlot(new Slot(inventory, 2, 104, 34));
-        this.addSlot(new Slot(inventory, 3, 152, 62));
+        this.addSlot(new Slot(inventory, 2, 104, 34){
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return false;
+            }
+        });
+        this.addSlot(new Slot(inventory, 3, 152, 62){
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return stack.getItem() instanceof BatteryItem;
+            }
+        });
 
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);

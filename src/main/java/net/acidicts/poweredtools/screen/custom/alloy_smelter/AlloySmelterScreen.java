@@ -1,4 +1,4 @@
-package net.acidicts.poweredtools.screen.custom.alloy_smelter.recycler;
+package net.acidicts.poweredtools.screen.custom.alloy_smelter;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.acidicts.poweredtools.PoweredTools;

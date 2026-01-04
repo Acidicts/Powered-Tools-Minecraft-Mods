@@ -1,7 +1,7 @@
 package net.acidicts.poweredtools.screen;
 
 import net.acidicts.poweredtools.PoweredTools;
-import net.acidicts.poweredtools.screen.custom.alloy_smelter.recycler.AlloySmelterScreenHandler;
+import net.acidicts.poweredtools.screen.custom.alloy_smelter.AlloySmelterScreenHandler;
 import net.acidicts.poweredtools.screen.custom.coal_generator.CoalGeneratorScreenHandler;
 import net.acidicts.poweredtools.screen.custom.power_pickaxe.PoweredPickaxeScreenHandler;
 import net.acidicts.poweredtools.screen.custom.recycler.RecyclerScreenHandler;
