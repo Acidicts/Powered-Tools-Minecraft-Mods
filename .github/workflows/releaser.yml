@@ -36,9 +36,21 @@ jobs:
           SHORT_SHA=$(git rev-parse --short HEAD)
           echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
 
-          # 4. Get Patch Number (Total Commit Count)
-          # This acts as an auto-incrementing number for every commit
-          PATCH_NUM=$(git rev-list --count HEAD)
+          # 4. Get Patch Number (Commits since version change)
+          # Find the commit hash that last touched the 'mod_version' line
+          # -l: show long rev, -s: suppress author/time
+          VERSION_COMMIT=$(git blame -l -s gradle.properties | grep "mod_version" | awk '{print $1}')
+          
+          if [ -z "$VERSION_COMMIT" ]; then
+            # Fallback to total count if detection fails
+            PATCH_NUM=$(git rev-list --count HEAD)
+          else
+            # Count commits from the version-change commit to HEAD
+            # We add 1 so the commit that introduced the version is Patch #1
+            SINCE_COUNT=$(git rev-list --count ${VERSION_COMMIT}..HEAD)
+            PATCH_NUM=$((SINCE_COUNT + 1))
+          fi
+          
           echo "PATCH_NUM=$PATCH_NUM" >> $GITHUB_ENV
 
       - name: Setup Java 21
@@ -64,11 +76,13 @@ jobs:
           tag_name: v${{ env.VERSION }}-${{ env.SHORT_SHA }}
           
           # Release Title Format: 0.0.2 - Patch #55
-          name: ${{ env.VERSION }} - Patch #${{ env.PATCH_NUM }}
+          # Quotes added to prevent # comment issue
+          name: "${{ env.VERSION }} - Patch #${{ env.PATCH_NUM }}"
           
           files: build/libs/*.jar
           draft: false
           prerelease: false
+          make_latest: false # Ensure this doesn't override the 'Latest' tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
