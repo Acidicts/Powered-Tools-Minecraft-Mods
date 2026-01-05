@@ -23,6 +23,7 @@ public class ModItemGroups {
                         entries.add(ModBlocks.RECYCLER);
                         entries.add(ModBlocks.COAL_GENERATOR);
                         entries.add(ModBlocks.ALLOY_SMELTER);
+                        entries.add(ModBlocks.LITHIUM_ORE);
 
                         entries.add(ModItems.BATTERY_TIER_0);
                         entries.add(ModItems.BATTERY_TIER_1);

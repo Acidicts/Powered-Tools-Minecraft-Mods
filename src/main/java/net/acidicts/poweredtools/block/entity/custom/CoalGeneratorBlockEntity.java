@@ -110,7 +110,7 @@ public class CoalGeneratorBlockEntity extends BlockEntity implements ExtendedScr
 
     @Override
     public Text getDisplayName() {
-        return Text.literal("Coal Generator");
+        return Text.translatable("block.poweredtools.coal_generator");
     }
 
     @Nullable

@@ -33,6 +33,10 @@ public class ModBlocks {
             new CoalGenerator(AbstractBlock.Settings.create().nonOpaque().requiresTool().strength(2f).resistance(12f)));
 
 
+    public static final Block LITHIUM_ORE = registerBlock("lithium_ore",
+            new Block(AbstractBlock.Settings.create().requiresTool().strength(5f).resistance(10f)));
+
+
     private static Block registerBlock(String name, Block block) {
         registerBlockItem(name, block);
         Block registeredBlock = Registry.register(Registries.BLOCK, Identifier.of(PoweredTools.MOD_ID, name), block);

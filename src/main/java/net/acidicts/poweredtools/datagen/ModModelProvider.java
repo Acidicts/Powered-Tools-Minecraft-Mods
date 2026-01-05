@@ -44,6 +44,8 @@ public class ModModelProvider extends FabricModelProvider {
 
         blockStateModelGenerator.registerNorthDefaultHorizontalRotation(ModBlocks.COAL_GENERATOR);
         blockStateModelGenerator.registerNorthDefaultHorizontalRotation(ModBlocks.ALLOY_SMELTER);
+        blockStateModelGenerator.registerSimpleCubeAll(ModBlocks.LITHIUM_ORE);
+
     }
 
     @Override

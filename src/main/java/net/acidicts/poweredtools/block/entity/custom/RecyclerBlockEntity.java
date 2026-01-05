@@ -159,7 +159,7 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
 
     @Override
     public Text getDisplayName() {
-        return Text.translatable("gui.poweredtools.recycler");
+        return Text.translatable("block.poweredtools.recycler");
     }
 
     @Override

@@ -24,7 +24,7 @@ public class AlloySmelterScreen extends HandledScreen<AlloySmelterScreenHandler>
 
 
     public AlloySmelterScreen(AlloySmelterScreenHandler handler, PlayerInventory inventory, Text title) {
-        super(handler, inventory, title);
+        super(handler, inventory, Text.translatable("gui.poweredtools.alloy_smelter"));
     }
 
     @Override

@@ -22,6 +22,8 @@
   "block.poweredtools.coal_generator": "Generator",
 
   "gui.poweredtools.recycler": "Recycler",
+  "gui.poweredtools.alloy_smelter": "Alloy Smelter",
+  "gui.poweredtools.charger": "Charger",
   "gui.poweredtools.coal_generator": "Coal Generator",
 
   "rei.poweredtools.recycler": "Recycler"

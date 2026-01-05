@@ -140,7 +140,7 @@ public class AlloySmelterBlockEntity extends BlockEntity implements ExtendedScre
 
     @Override
     public Text getDisplayName() {
-        return Text.translatable("gui.poweredtools.recycler");
+        return Text.translatable("block.poweredtools.alloy_smelter");
     }
 
     @Override

@@ -6,6 +6,7 @@ import net.acidicts.poweredtools.item.ModItemGroups;
 import net.acidicts.poweredtools.item.ModItems;
 import net.acidicts.poweredtools.particle.ModParticles;
 import net.acidicts.poweredtools.recipe.ModRecipes;
+import net.acidicts.poweredtools.world.gen.ModWorldGeneration;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,8 @@ public class PoweredTools implements ModInitializer {
 
         ModItems.registerItems();
         ModBlocks.registerBlocks();
+
+        ModWorldGeneration.generateModWorldGeneration();
 
         ModBlockEntities.registerBlockEntities();
         ModParticles.registerParticles();
