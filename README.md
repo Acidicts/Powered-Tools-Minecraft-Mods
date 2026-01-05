@@ -21,7 +21,7 @@ I recommend using [Prism Launcher](https://prismlauncher.org/) to install Minecr
 5. Go to the "Mods" tab and click "Open Mods Folder".
 6.
   a. Press Add Mods and select to download from [Modrinth](https://modrinth.com/project/powered_tools)
-  b. If the link results in 404 go to [releases](https://github.com/Acidicts/Powered-Tools-Minecraft-Mods/releases) and downloaded either the latest build or latest non-patch
+  b. If the link results in 404 go to [releases](https://github.com/Acidicts/Powered-Tools-Minecraft-Mods/releases) and downloaded either the [latest build](https://github.com/Acidicts/Powered-Tools-Minecraft-Mods/releases/tag/latest) or latest non-patch
 7. Add and download the required dependencies:
     - [Fabric API](https://modrinth.com/project/fabric-api) 
     - [Geckolib](https://modrinth.com/project/geckolib) - 4.7.0+
