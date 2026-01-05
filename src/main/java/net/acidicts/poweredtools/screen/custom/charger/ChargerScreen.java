@@ -18,7 +18,7 @@ import java.util.Optional;
 
 public class ChargerScreen extends HandledScreen<ChargerScreenHandler> {
     private static final Identifier GUI_TEXTURE =
-            Identifier.of(PoweredTools.MOD_ID, "textures/gui/coal_generator/coal_generator_gui.png");
+            Identifier.of(PoweredTools.MOD_ID, "textures/gui/charger/charger_gui.png");
     private EnergyInfoArea energyInfoArea;
 
     public ChargerScreen(ChargerScreenHandler handler, PlayerInventory inventory, Text title) {
