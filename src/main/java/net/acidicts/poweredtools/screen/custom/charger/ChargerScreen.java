@@ -28,7 +28,7 @@ public class ChargerScreen extends HandledScreen<ChargerScreenHandler> {
     @Override
     protected void init() {
         super.init();
-        titleX = (width - backgroundWidth) / 2;
+        titleX = ((width - backgroundWidth) / 2)-145;
 
         assignEnergyInfoArea();
     }
@@ -52,6 +52,8 @@ public class ChargerScreen extends HandledScreen<ChargerScreenHandler> {
 
     @Override
     protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
+        context.drawText(this.textRenderer, this.title, this.titleX, this.titleY, 4210752, false);
+
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
 

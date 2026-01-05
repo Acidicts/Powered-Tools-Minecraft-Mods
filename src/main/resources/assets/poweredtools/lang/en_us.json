@@ -16,6 +16,8 @@
 
   "itemgroup.poweredtools.powered_tools_group": "Powered Tools",
 
+  "block.poweredtools.lithium_ore": "Lithium Ore",
+
   "block.poweredtools.charger": "Charger",
   "block.poweredtools.alloy_smelter": "Alloy Smelter",
   "block.poweredtools.recycler": "Recycler",
