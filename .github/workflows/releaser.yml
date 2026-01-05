@@ -63,8 +63,8 @@ jobs:
           # Example Tag: v0.0.2-a1b2c3d
           tag_name: v${{ env.VERSION }}-${{ env.SHORT_SHA }}
           
-          # Release Title Format: 0.0.2 - #Patch 55 - Fixed bugs
-          name: ${{ env.VERSION }} - #Patch ${{ env.PATCH_NUM }} - ${{ env.COMMIT_MSG }}
+          # Release Title Format: 0.0.2 - Patch #55
+          name: ${{ env.VERSION }} - Patch #${{ env.PATCH_NUM }}
           
           files: build/libs/*.jar
           draft: false
