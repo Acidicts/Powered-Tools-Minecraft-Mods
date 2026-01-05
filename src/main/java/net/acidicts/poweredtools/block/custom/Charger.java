@@ -2,19 +2,13 @@ package net.acidicts.poweredtools.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import net.acidicts.poweredtools.block.entity.custom.ChargerBlockEntity;
-import net.acidicts.poweredtools.block.entity.custom.RecyclerBlockEntity;
-import net.acidicts.poweredtools.item.ModItems;
-import net.acidicts.poweredtools.item.custom.BatteryItem;
 import net.acidicts.poweredtools.particle.ModParticles;
-import net.acidicts.poweredtools.tags.ModTags;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
@@ -148,6 +142,7 @@ public class Charger extends BlockWithEntity {
                         player.openHandledScreen(screenHandlerFactory);
                     }
                 }
+                return ActionResult.SUCCESS;
             }
         }
 
