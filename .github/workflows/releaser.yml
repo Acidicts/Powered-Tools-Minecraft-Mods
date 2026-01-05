@@ -1,85 +1,96 @@
-name: Auto-Release on Version Change
+name: Auto-Release Every Commit
 
 on:
   push:
     branches:
       - master
-    paths:
-      - 'gradle.properties' # Only triggers if this file changes
-  workflow_dispatch: # Allows you to still run it manually if needed
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  check-and-release:
+  build-and-release:
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetches history so we can verify tags accurately
+          fetch-depth: 0 # CRITICAL: Required to count commits for the patch number
 
-      - name: Extract Version from gradle.properties
-        id: get_version
+      - name: Extract Metadata
+        id: meta
         run: |
+          # 1. Get Version from gradle.properties
           VERSION=$(grep "mod_version" gradle.properties | cut -d'=' -f2 | tr -d '[:space:]')
-          echo "Detected version: $VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Check if Tag Exists
-        id: check_tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          TAG_NAME="v${{ env.VERSION }}"
-          echo "Checking for tag: $TAG_NAME"
-          
-          # Check if the tag exists in the remote repository
-          if git ls-remote --exit-code --tags origin "refs/tags/$TAG_NAME" >/dev/null 2>&1; then
-            echo "Tag $TAG_NAME already exists."
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "Tag $TAG_NAME does not exist. Proceeding with release."
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
+          # 2. Get Commit Message (First line only)
+          COMMIT_MSG=$(git log -1 --pretty=%s)
+          echo "COMMIT_MSG=$COMMIT_MSG" >> $GITHUB_ENV
+
+          # 3. Get Short SHA (For unique Tag ID)
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
+
+          # 4. Get Patch Number (Total Commit Count)
+          # This acts as an auto-incrementing number for every commit
+          PATCH_NUM=$(git rev-list --count HEAD)
+          echo "PATCH_NUM=$PATCH_NUM" >> $GITHUB_ENV
 
       - name: Setup Java 21
-        if: steps.check_tag.outputs.exists == 'false'
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
 
       - name: Setup Gradle
-        if: steps.check_tag.outputs.exists == 'false'
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Make gradlew executable
-        if: steps.check_tag.outputs.exists == 'false'
-        run: chmod +x gradlew
-
       - name: Build with Gradle
-        if: steps.check_tag.outputs.exists == 'false'
-        run: ./gradlew build
-
-      - name: Create and Push Tag
-        if: steps.check_tag.outputs.exists == 'false'
         run: |
-          TAG="v${{ env.VERSION }}"
+          chmod +x gradlew
+          ./gradlew build
+
+      # --- RELEASE 1: The Specific Commit Release ---
+      - name: Create Specific Release
+        uses: softprops/action-gh-release@v2
+        with:
+          # Tag must be unique. We use version + commit hash.
+          # Example Tag: v0.0.2-a1b2c3d
+          tag_name: v${{ env.VERSION }}-${{ env.SHORT_SHA }}
+          
+          # Release Title Format: 0.0.2 - #Patch 55 - Fixed bugs
+          name: ${{ env.VERSION }} - #Patch ${{ env.PATCH_NUM }} - ${{ env.COMMIT_MSG }}
+          
+          files: build/libs/*.jar
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # --- RELEASE 2: The "Latest" Release ---
+      - name: Update 'latest' Tag
+        run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          git tag "$TAG"
-          git push origin "$TAG"
+          # Force move the 'latest' tag to the current commit
+          git tag -d latest || true
+          git push origin :refs/tags/latest || true
+          git tag latest
+          git push origin latest
 
-      - name: Create GitHub Release
-        if: steps.check_tag.outputs.exists == 'false'
+      - name: Publish 'Latest' Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ env.VERSION }}
-          name: Release v${{ env.VERSION }}
+          tag_name: latest
+          name: Latest Build (v${{ env.VERSION }})
+          body: "Latest build of version ${{ env.VERSION }} (Patch #${{ env.PATCH_NUM }})"
           files: build/libs/*.jar
+          draft: false
+          prerelease: false
+          make_latest: true # Marks this as the official "Latest" in GitHub UI
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
