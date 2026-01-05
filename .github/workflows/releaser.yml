@@ -37,21 +37,27 @@ jobs:
           echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
 
           # 4. Get Patch Number (Commits since version change)
-          # Find the commit hash that last touched the 'mod_version' line
-          # -l: show long rev, -s: suppress author/time
-          VERSION_COMMIT=$(git blame -l -s gradle.properties | grep "mod_version" | awk '{print $1}')
+          VER_LINE=$(grep -n "mod_version" gradle.properties | head -n 1 | cut -d: -f1)
+          START_COMMIT=$(git blame -l -L $VER_LINE,$VER_LINE gradle.properties | awk '{print $1}' | tr -d '^')
           
-          if [ -z "$VERSION_COMMIT" ]; then
-            # Fallback to total count if detection fails
-            PATCH_NUM=$(git rev-list --count HEAD)
+          # Count commits from start to HEAD. 
+          # Note: "git rev-list START..HEAD" counts commits AFTER start.
+          COUNT=$(git rev-list --count $START_COMMIT..HEAD)
+          
+          # If count is 0, it means we are ON the commit that changed the version.
+          # This is the first build for this version.
+          if [ "$COUNT" -eq "0" ]; then
+             RELEASE_TITLE="${VERSION} - Release"
+             # Also set PATCH_NUM to 1 just in case we need it elsewhere
+             PATCH_NUM=1
           else
-            # Count commits from the version-change commit to HEAD
-            # We add 1 so the commit that introduced the version is Patch #1
-            SINCE_COUNT=$(git rev-list --count ${VERSION_COMMIT}..HEAD)
-            PATCH_NUM=$((SINCE_COUNT + 1))
+             # Add 1 because the count is exclusive of the start commit
+             PATCH_NUM=$((COUNT + 1))
+             RELEASE_TITLE="${VERSION} - Patch #${PATCH_NUM}"
           fi
           
           echo "PATCH_NUM=$PATCH_NUM" >> $GITHUB_ENV
+          echo "RELEASE_TITLE=$RELEASE_TITLE" >> $GITHUB_ENV
 
       - name: Setup Java 21
         uses: actions/setup-java@v4
@@ -71,28 +77,28 @@ jobs:
       - name: Create Specific Release
         uses: softprops/action-gh-release@v2
         with:
-          # Tag must be unique. We use version + commit hash.
-          # Example Tag: v0.0.2-a1b2c3d
           tag_name: v${{ env.VERSION }}-${{ env.SHORT_SHA }}
           
-          # Release Title Format: 0.0.2 - Patch #55
-          # Quotes added to prevent # comment issue
-          name: "${{ env.VERSION }} - Patch #${{ env.PATCH_NUM }}"
+          # Use the dynamic title we created above
+          name: "${{ env.RELEASE_TITLE }}"
           
           files: build/libs/*.jar
           draft: false
           prerelease: false
-          make_latest: false # Ensure this doesn't override the 'Latest' tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # --- RELEASE 2: The "Latest" Release ---
+      - name: Delete Old 'latest' Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete latest --cleanup-tag -y || echo "No existing 'latest' release to delete"
+
       - name: Update 'latest' Tag
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Force move the 'latest' tag to the current commit
           git tag -d latest || true
           git push origin :refs/tags/latest || true
           git tag latest
@@ -103,10 +109,11 @@ jobs:
         with:
           tag_name: latest
           name: Latest Build (v${{ env.VERSION }})
-          body: "Latest build of version ${{ env.VERSION }} (Patch #${{ env.PATCH_NUM }})"
+          # Update body to show the correct title context
+          body: "Latest build: ${{ env.RELEASE_TITLE }}"
           files: build/libs/*.jar
           draft: false
           prerelease: false
-          make_latest: true # Marks this as the official "Latest" in GitHub UI
+          make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
