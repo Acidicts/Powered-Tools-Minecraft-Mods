@@ -1,7 +1,5 @@
 package net.acidicts.poweredtools.item.custom;
 
-import net.acidicts.poweredtools.PoweredTools;
-import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
@@ -11,7 +9,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
-import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 import java.util.List;
 import java.util.Map;
@@ -33,6 +30,10 @@ public class BatteryItem extends Item {
         super(settings.maxCount(1).component(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT));
 
         this.material = material;
+    }
+
+    public int getMaxReceive(ItemStack stack) {
+        return getTransferRate(stack);
     }
 
     @Override
@@ -208,51 +209,27 @@ public class BatteryItem extends Item {
     }
 
     public int recharge(ItemStack stack, int amount) {
-        int accepted = getMaxCapacity(stack) - getCurrentCharge(stack);
-        if (accepted >= amount) {
-            accepted = amount;
-        }
-        int denied = Math.max(amount - accepted, 0);
-        PoweredTools.LOGGER.info(String.valueOf(accepted));
+        int space = getMaxCapacity(stack) - getCurrentCharge(stack);
+        int accepted = Math.min(space, amount);
+        accepted = Math.min(accepted, getTransferRate(stack));
 
-        SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(getMaxCapacity(stack), getTransferRate(stack), getTransferRate(stack));
-        energyStorage.amount = getCurrentCharge(stack);
+        setCurrentCharge(stack, getCurrentCharge(stack) + accepted);
 
-        try (Transaction transaction = Transaction.openOuter()) {
-            energyStorage.insert(accepted, transaction);
-            transaction.commit();
-        }
-        setCurrentCharge(stack, Math.toIntExact(energyStorage.getAmount()));
-
-        if (energyStorage.amount == getMaxCapacity(stack)) {
+        if (getCurrentCharge(stack) == getMaxCapacity(stack)) {
             setCycles(stack, getCycles(stack) + 1);
         }
 
-        return denied;
+        return accepted;
     }
 
     public int discharge(ItemStack stack, int amount) {
         int available = getCurrentCharge(stack);
-        if (available >= amount) {
-            available = amount;
-        }
-        int denied = Math.max(amount - available, 0);
+        int extracted = Math.min(available, amount);
+        extracted = Math.min(extracted, getTransferRate(stack));
 
-        SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(getMaxCapacity(stack), getTransferRate(stack), getTransferRate(stack));
-        energyStorage.amount = getCurrentCharge(stack);
+        setCurrentCharge(stack, getCurrentCharge(stack) - extracted);
 
-        try (Transaction transaction = Transaction.openOuter()) {
-            energyStorage.extract(available, transaction);
-            transaction.commit();
-        }
-
-        setCurrentCharge(stack, Math.toIntExact(energyStorage.getAmount()));
-
-        if (energyStorage.amount >= getMaxCapacity(stack)) {
-            setCycles(stack, getCycles(stack) + 1);
-        }
-
-        return denied;
+        return extracted;
     }
 
     private void correctCharge(ItemStack stack) {

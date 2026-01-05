@@ -2,6 +2,7 @@ package net.acidicts.poweredtools.screen;
 
 import net.acidicts.poweredtools.PoweredTools;
 import net.acidicts.poweredtools.screen.custom.alloy_smelter.AlloySmelterScreenHandler;
+import net.acidicts.poweredtools.screen.custom.charger.ChargerScreenHandler;
 import net.acidicts.poweredtools.screen.custom.coal_generator.CoalGeneratorScreenHandler;
 import net.acidicts.poweredtools.screen.custom.power_pickaxe.PoweredPickaxeScreenHandler;
 import net.acidicts.poweredtools.screen.custom.recycler.RecyclerScreenHandler;
@@ -25,6 +26,10 @@ public class ModScreenHandlers {
     public static final ScreenHandlerType<AlloySmelterScreenHandler> ALLOY_SMELTER_SCREEN_HANDLER =
             Registry.register(Registries.SCREEN_HANDLER, Identifier.of(PoweredTools.MOD_ID, "alloy_smelter_screen_handler"),
                     new ExtendedScreenHandlerType<>(AlloySmelterScreenHandler::new, BlockPos.PACKET_CODEC));
+
+    public static final ScreenHandlerType<ChargerScreenHandler> CHARGER_SCREEN_HANDLER =
+            Registry.register(Registries.SCREEN_HANDLER, Identifier.of(PoweredTools.MOD_ID, "charger_screen_handler"),
+                    new ExtendedScreenHandlerType<>(ChargerScreenHandler::new, BlockPos.PACKET_CODEC));
 
     public static final ScreenHandlerType<PoweredPickaxeScreenHandler> POWERED_PICKAXE_SCREEN_HANDLER =
             Registry.register(Registries.SCREEN_HANDLER, Identifier.of(PoweredTools.MOD_ID, "powered_pickaxe_screen_handler"),

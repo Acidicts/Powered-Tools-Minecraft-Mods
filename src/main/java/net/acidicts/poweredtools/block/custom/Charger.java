@@ -2,6 +2,7 @@ package net.acidicts.poweredtools.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import net.acidicts.poweredtools.block.entity.custom.ChargerBlockEntity;
+import net.acidicts.poweredtools.block.entity.custom.RecyclerBlockEntity;
 import net.acidicts.poweredtools.item.ModItems;
 import net.acidicts.poweredtools.item.custom.BatteryItem;
 import net.acidicts.poweredtools.particle.ModParticles;
@@ -14,6 +15,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.text.Text;
@@ -139,36 +141,12 @@ public class Charger extends BlockWithEntity {
             }
             if (chargerBlockEntity.hasOpened()) {
                 createParticles(world, pos);
-            }
-        }
+                if (!world.isClient) {
+                    NamedScreenHandlerFactory screenHandlerFactory = ((ChargerBlockEntity) world.getBlockEntity(pos));
 
-        ItemStack stack = player.getMainHandStack();
-        if (stack.isIn(ModTags.Items.chargeable) && stack.getItem() instanceof BatteryItem batteryItem) {
-            if (!world.isClient) {
-                if (batteryItem.isBroken(stack)) {
-                    int slot = player.getInventory().getSlotWithStack(stack);
-                    player.getInventory().removeStack(slot);
-                    Item brokenBattery = ModItems.getBrokenBatteryByTier((String) batteryItem.getTier(stack, "string"));
-                    player.getInventory().insertStack(brokenBattery.getDefaultStack());
-                    return ActionResult.SUCCESS;
-                }
-
-                int maxCapacity = batteryItem.getMaxCapacity(stack);
-                int currentCharge = batteryItem.getCurrentCharge(stack);
-                int rechargeAmount = maxCapacity - currentCharge;
-
-                if (rechargeAmount > 0) {
-                    batteryItem.recharge(stack, rechargeAmount);
-                    return ActionResult.SUCCESS;
-                }
-            } else {
-                if (batteryItem.isBroken(stack)) {
-                    return ActionResult.SUCCESS;
-                }
-                int maxCapacity = batteryItem.getMaxCapacity(stack);
-                int currentCharge = batteryItem.getCurrentCharge(stack);
-                if (maxCapacity - currentCharge > 0) {
-                    return ActionResult.SUCCESS;
+                    if (screenHandlerFactory != null) {
+                        player.openHandledScreen(screenHandlerFactory);
+                    }
                 }
             }
         }
