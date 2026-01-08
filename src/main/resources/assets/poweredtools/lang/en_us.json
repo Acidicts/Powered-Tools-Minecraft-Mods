@@ -14,6 +14,17 @@
   "item.poweredtools.broken_battery_4": "Broken Netherite Battery",
   "item.poweredtools.broken_battery_5": "Broken Diamond-Gold Battery",
 
+  "item.poweredtools.diamond_gold_ingot": "Diamond-Gold Ingot",
+  "item.poweredtools.steel_dust": "Steel Dust",
+  "item.poweredtools.steel_ingot": "Steel Ingot",
+  "item.poweredtools.lithium_dust": "Lithium Dust",
+  "item.poweredtools.lithium_ingot": "Lithium Ingot",
+  "item.poweredtools.impure_lithium": "Impure Lithium Chunk",
+
+  "item.poweredtools.efficiency_modifier": "Efficiency Modifier",
+  "item.poweredtools.fortune_modifier": "Fortune Modifier",
+  "item.poweredtools.silk_touch_modifier": "Silk Touch Modifier",
+
   "itemgroup.poweredtools.powered_tools_group": "Powered Tools",
 
   "block.poweredtools.lithium_ore": "Lithium Ore",

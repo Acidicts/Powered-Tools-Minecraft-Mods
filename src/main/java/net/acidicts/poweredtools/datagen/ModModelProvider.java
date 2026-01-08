@@ -9,6 +9,7 @@ import net.acidicts.poweredtools.item.custom.BrokenBatteryItem;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.data.client.*;
+import net.minecraft.item.Item;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
@@ -33,6 +34,20 @@ public class ModModelProvider extends FabricModelProvider {
             (BrokenBatteryItem) ModItems.BROKEN_BATTERY_TIER_4,
             (BrokenBatteryItem) ModItems.BROKEN_BATTERY_TIER_5
     );
+    public final List<Item> ingredients = List.of(
+            ModItems.IMPURE_LITHIUM_INGOT,
+            ModItems.LITHIUM_DUST,
+            ModItems.LITHIUM_INGOT,
+            ModItems.STEEL_DUST,
+            ModItems.STEEL_INGOT,
+
+            ModItems.DIAMOND_GOLD_INGOT
+    );
+    public final List<Item> modifiers = List.of(
+            ModItems.EFFICIENCY_MODIFIER,
+            ModItems.FORTUNE_MODIFIER,
+            ModItems.SILK_TOUCH_MODIFIER
+    );
 
 
     public ModModelProvider(FabricDataOutput output) {
@@ -52,11 +67,17 @@ public class ModModelProvider extends FabricModelProvider {
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
         itemModelGenerator.register(ModItems.POWERED_PICKAXE, Models.HANDHELD);
 
-        for (BatteryItem battery : batteryItems) {
-            itemModelGenerator.register(battery, Models.GENERATED);
+        for (BatteryItem item : batteryItems) {
+            itemModelGenerator.register(item, Models.GENERATED);
         }
-        for (BrokenBatteryItem brokenBattery : brokenBatteryItems) {
-            itemModelGenerator.register(brokenBattery, Models.GENERATED);
+        for (BrokenBatteryItem item : brokenBatteryItems) {
+            itemModelGenerator.register(item, Models.GENERATED);
+        }
+        for (Item item : ingredients) {
+            itemModelGenerator.register(item, Models.GENERATED);
+        }
+        for (Item item : modifiers) {
+            itemModelGenerator.register(item, Models.GENERATED);
         }
     }
 }

@@ -49,6 +49,10 @@ public class Powered_Pickaxe extends PickaxeItem {
         nbt.putInt("battery_cycles", 0);
         nbt.putInt("battery_charge", 100);
         nbt.putBoolean("battery_installed", true);
+
+        nbt.putInt("pickaxe.modifier.speed", 0);
+        nbt.putInt("pickaxe.modifier.fortune", 0);
+        nbt.putInt("pickaxe.modifier.silk_touch", 0);
         stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
     }
 
@@ -164,7 +168,7 @@ public class Powered_Pickaxe extends PickaxeItem {
     }
 
     public void installBattery(ItemStack pickaxeStack, ItemStack batteryStack, BatteryItem batteryItem) {
-        NbtCompound pickaxeNbt = new NbtCompound();
+        NbtCompound pickaxeNbt = getBatteryData(pickaxeStack);
 
         pickaxeNbt.putString("battery_tier", (String) batteryItem.getTier(batteryStack, "string"));
         pickaxeNbt.putInt("battery_capacity", batteryItem.getMaxCapacity(batteryStack));
@@ -257,6 +261,45 @@ public class Powered_Pickaxe extends PickaxeItem {
         int cycles = nbt.getInt("battery_cycles");
         int lifespan = nbt.getInt("battery_lifespan");
         return lifespan - cycles;
+    }
+
+    public int getSpeedModifiers(ItemStack stack) {
+        NbtCompound nbt = getBatteryData(stack);
+        return nbt.getInt("pickaxe.modifier.speed");
+    }
+
+    public void setSpeedModifier(ItemStack stack, int number) {
+        NbtCompound nbt = getBatteryData(stack);
+        nbt.putInt("pickaxe.modifier.speed", number);
+        setBatteryData(stack, nbt);
+    }
+
+    public int getFortuneModifiers(ItemStack stack) {
+        NbtCompound nbt = getBatteryData(stack);
+        return nbt.getInt("pickaxe.modifier.fortune");
+    }
+
+    public void setFortuneModifier(ItemStack stack, int number) {
+        NbtCompound nbt = getBatteryData(stack);
+        nbt.putInt("pickaxe.modifier.fortune", number);
+        setBatteryData(stack, nbt);
+    }
+
+    public int getSilkTouchModifier(ItemStack stack) {
+        NbtCompound nbt = getBatteryData(stack);
+        return nbt.getInt("pickaxe.modifier.silk_touch");
+    }
+
+    public void setSilkTouchModifier(ItemStack stack, int number) {
+        NbtCompound nbt = getBatteryData(stack);
+        nbt.putInt("pickaxe.modifier.silk_touch", number);
+        setBatteryData(stack, nbt);
+    }
+
+    public void setModifierType(ItemStack stack, String str) {
+        NbtCompound nbt = getBatteryData(stack);
+        nbt.putString("pickaxe.modifier.modifier.type", str);
+        setBatteryData(stack, nbt);
     }
 
     public void setCycles(ItemStack stack, int cycles){

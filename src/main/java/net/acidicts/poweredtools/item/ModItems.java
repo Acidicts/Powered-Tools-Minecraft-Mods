@@ -43,6 +43,42 @@ public class ModItems {
     public static final Item BROKEN_BATTERY_TIER_5 = registerItem("broken_battery_5",
             new BrokenBatteryItem(ModBatteryMaterials.Diamond_Gold, new Item.Settings()));
 
+
+    // Ingredients
+
+    public static final Item LITHIUM_DUST = registerItem("lithium_dust",
+            new Item(new Item.Settings()));
+
+    public static final Item IMPURE_LITHIUM_INGOT = registerItem("impure_lithium",
+            new Item(new Item.Settings()));
+
+    public static final Item LITHIUM_INGOT = registerItem("lithium_ingot",
+            new Item(new Item.Settings()));
+
+    public static final Item STEEL_DUST = registerItem("steel_dust",
+            new Item(new Item.Settings()));
+
+    public static final Item STEEL_INGOT = registerItem("steel_ingot",
+            new Item(new Item.Settings()));
+
+
+    // High-Tier Tools Ingredients
+
+    public static final Item DIAMOND_GOLD_INGOT = registerItem("diamond_gold_ingot",
+            new Item(new Item.Settings()));
+
+    // Modifiers
+
+    public static final Item EFFICIENCY_MODIFIER = registerItem("efficiency_modifier",
+            new Item(new Item.Settings().maxCount(5)));
+
+    public static final Item FORTUNE_MODIFIER = registerItem("fortune_modifier",
+            new Item(new Item.Settings().maxCount(3)));
+
+    public static final Item SILK_TOUCH_MODIFIER = registerItem("silk_touch_modifier",
+            new Item(new Item.Settings().maxCount(1)));
+
+
     private static Item registerItem(String name, Item item) {
         Item registeredItem = Registry.register(Registries.ITEM, Identifier.of(PoweredTools.MOD_ID, name), item);
 

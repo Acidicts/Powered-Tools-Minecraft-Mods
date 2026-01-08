@@ -10,6 +10,7 @@ import net.minecraft.util.Identifier;
 public class ModTags {
     public static class Items {
         public static final TagKey<Item> chargeable = createTagKey("chargeable");
+        public static final TagKey<Item> ModifierItems = createTagKey("modifiers");
 
         private static TagKey<Item> createTagKey(String name) {
             return TagKey.of(RegistryKeys.ITEM, Identifier.of(PoweredTools.MOD_ID, name));

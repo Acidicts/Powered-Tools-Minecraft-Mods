@@ -22,5 +22,10 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
                 .add(ModItems.BATTERY_TIER_3)
                 .add(ModItems.BATTERY_TIER_4)
                 .add(ModItems.BATTERY_TIER_5);
+
+        getOrCreateTagBuilder(ModTags.Items.ModifierItems)
+                .add(ModItems.SILK_TOUCH_MODIFIER)
+                .add(ModItems.EFFICIENCY_MODIFIER)
+                .add(ModItems.FORTUNE_MODIFIER);
     }
 }

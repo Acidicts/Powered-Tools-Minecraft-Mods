@@ -1,14 +1,24 @@
 package net.acidicts.poweredtools.screen.custom.power_pickaxe;
 
+import net.acidicts.poweredtools.PoweredTools;
+import net.acidicts.poweredtools.item.ModItems;
 import net.acidicts.poweredtools.item.custom.BatteryItem;
 import net.acidicts.poweredtools.item.custom.Powered_Pickaxe;
 import net.acidicts.poweredtools.screen.ModScreenHandlers;
+import net.acidicts.poweredtools.tags.ModTags;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ItemEnchantmentsComponent;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
@@ -18,8 +28,8 @@ import team.reborn.energy.api.EnergyStorage;
 
 public class PoweredPickaxeScreenHandler extends ScreenHandler {
     private final Inventory inventory;
-    private final PropertyDelegate propertyDelegate;
     private final ItemStack stack;
+    private final PlayerInventory playerInventory;
     private final InventoryChangedListener inventoryChangeListener;
 
     public PoweredPickaxeScreenHandler(int syncId, PlayerInventory playerInventory) {
@@ -28,9 +38,10 @@ public class PoweredPickaxeScreenHandler extends ScreenHandler {
 
     public PoweredPickaxeScreenHandler(int syncId, PlayerInventory playerInventory, ItemStack stack) {
         super(ModScreenHandlers.POWERED_PICKAXE_SCREEN_HANDLER, syncId);
+        this.playerInventory = playerInventory;
         this.stack = stack;
         this.inventory = new SimpleInventory(4);
-        this.propertyDelegate = new ArrayPropertyDelegate(2);
+        PropertyDelegate propertyDelegate = new ArrayPropertyDelegate(2);
         this.inventoryChangeListener = this::onInventoryChanged;
 
         checkSize(inventory, 4);
@@ -38,19 +49,19 @@ public class PoweredPickaxeScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(inventory, 0, 10, 9){
             @Override
             public boolean canInsert(ItemStack stack) {
-                return false;
+                return stack.isOf(ModItems.EFFICIENCY_MODIFIER);
             }
         });
         this.addSlot(new Slot(inventory, 1, 10, 33){
             @Override
             public boolean canInsert(ItemStack stack) {
-                return false;
+                return stack.isOf(ModItems.FORTUNE_MODIFIER);
             }
         });
         this.addSlot(new Slot(inventory, 2, 10, 57) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return false;
+                return stack.isIn(ModTags.Items.ModifierItems);
             }
         });
         this.addSlot(new Slot(inventory, 3, 80, 35) {
@@ -66,6 +77,23 @@ public class PoweredPickaxeScreenHandler extends ScreenHandler {
                 pickaxe.installBattery(stack, battery, (BatteryItem) battery.getItem());
                 inventory.setStack(3, battery);
             }
+            if (pickaxe.getSpeedModifiers(stack) > 0) {
+                ItemStack modifier = ModItems.EFFICIENCY_MODIFIER.getDefaultStack();
+                modifier.setCount(pickaxe.getSpeedModifiers(stack));
+                inventory.setStack(0, modifier);
+            }
+            if (pickaxe.getFortuneModifiers(stack) > 0) {
+                ItemStack modifier = ModItems.FORTUNE_MODIFIER.getDefaultStack();
+                modifier.setCount(pickaxe.getFortuneModifiers(stack));
+                inventory.setStack(1, modifier);
+            }
+            if (pickaxe.getSilkTouchModifier(stack) > 0) {
+                ItemStack modifier = ModItems.SILK_TOUCH_MODIFIER.getDefaultStack();
+                modifier.setCount(pickaxe.getSilkTouchModifier(stack));
+                inventory.setStack(2, modifier);
+            }
+            PoweredTools.LOGGER.info("{} {} {}", pickaxe.getSpeedModifiers(stack), pickaxe.getFortuneModifiers(stack), pickaxe.getSilkTouchModifier(stack));
+            syncEnchantments();
         }
 
         if (inventory instanceof SimpleInventory simpleInventory) {
@@ -80,6 +108,9 @@ public class PoweredPickaxeScreenHandler extends ScreenHandler {
 
     private void onInventoryChanged(Inventory sender) {
         if (stack.getItem() instanceof Powered_Pickaxe pickaxe) {
+            ItemStack efficiencyStack = sender.getStack(0);
+            ItemStack fortuneStack = sender.getStack(1);
+            ItemStack modifierStack = sender.getStack(2);
             ItemStack batteryStack = sender.getStack(3);
             if (batteryStack.isEmpty()) {
                 if (pickaxe.isBatteryInstalled(stack)) {
@@ -88,6 +119,49 @@ public class PoweredPickaxeScreenHandler extends ScreenHandler {
             } else if (batteryStack.getItem() instanceof BatteryItem batteryItem) {
                 pickaxe.installBattery(stack, batteryStack, batteryItem);
             }
+
+            if (efficiencyStack.isEmpty()) {
+                pickaxe.setSpeedModifier(stack, 0);
+            } else if (efficiencyStack.isOf(ModItems.EFFICIENCY_MODIFIER)) {
+                pickaxe.setSpeedModifier(stack, efficiencyStack.getCount());
+            }
+            if (fortuneStack.isEmpty()) {
+                pickaxe.setFortuneModifier(stack, 0);
+            } else if (fortuneStack.isOf(ModItems.FORTUNE_MODIFIER)) {
+                pickaxe.setFortuneModifier(stack, fortuneStack.getCount());
+            }
+            if (modifierStack.isEmpty()) {
+                pickaxe.setSilkTouchModifier(stack, 0);
+            } else if (modifierStack.isOf(ModItems.SILK_TOUCH_MODIFIER)) {
+                pickaxe.setSilkTouchModifier(stack, modifierStack.getCount());
+                pickaxe.setModifierType(stack, modifierStack.getItem().toString());
+            } else {
+                pickaxe.setSilkTouchModifier(stack, 0);
+            }
+
+            syncEnchantments();
+            this.sendContentUpdates();
+        }
+    }
+
+    private void syncEnchantments() {
+        if (stack.getItem() instanceof Powered_Pickaxe pickaxe) {
+            var registry = playerInventory.player.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT);
+            if (registry == null) return;
+            ItemEnchantmentsComponent.Builder builder = new ItemEnchantmentsComponent.Builder(ItemEnchantmentsComponent.DEFAULT);
+
+            addEnchantment(builder, registry, Enchantments.EFFICIENCY, pickaxe.getSpeedModifiers(stack));
+            addEnchantment(builder, registry, Enchantments.FORTUNE, pickaxe.getFortuneModifiers(stack));
+            addEnchantment(builder, registry, Enchantments.SILK_TOUCH, pickaxe.getSilkTouchModifier(stack));
+
+            stack.set(DataComponentTypes.ENCHANTMENTS, builder.build().withShowInTooltip(false));
+            this.sendContentUpdates();
+        }
+    }
+
+    private void addEnchantment(ItemEnchantmentsComponent.Builder builder, Registry<Enchantment> registry, RegistryKey<Enchantment> key, int level) {
+        if (level > 0) {
+            registry.getEntry(key).ifPresent(entry -> builder.set(entry, level));
         }
     }
 
@@ -137,7 +211,7 @@ public class PoweredPickaxeScreenHandler extends ScreenHandler {
     public ItemStack quickMove(PlayerEntity player, int invSlot) {
         ItemStack newStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(invSlot);
-        if (slot != null && slot.hasStack()) {
+        if (slot.hasStack()) {
             ItemStack originalStack = slot.getStack();
             newStack = originalStack.copy();
             if (invSlot < this.inventory.size()) {
@@ -167,11 +241,8 @@ public class PoweredPickaxeScreenHandler extends ScreenHandler {
         if (inventory instanceof SimpleInventory simpleInventory) {
             simpleInventory.removeListener(inventoryChangeListener);
         }
-        // Clear the battery slot so it doesn't get dropped (it's saved in the pickaxe)
-        inventory.setStack(3, ItemStack.EMPTY);
 
         super.onClosed(player);
-        dropInventory(player, inventory);
     }
 
     private void addPlayerInventory(PlayerInventory playerInventory) {

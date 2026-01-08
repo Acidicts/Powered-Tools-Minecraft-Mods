@@ -4,6 +4,7 @@
   "package": "net.acidicts.poweredtools.mixins",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "EnchantmentHelperMixin"
   ],
   "injectors": {
     "defaultRequire": 1

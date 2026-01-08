@@ -38,6 +38,17 @@ public class ModItemGroups {
                         entries.add(ModItems.BROKEN_BATTERY_TIER_3);
                         entries.add(ModItems.BROKEN_BATTERY_TIER_4);
                         entries.add(ModItems.BROKEN_BATTERY_TIER_5);
+
+                        entries.add(ModItems.IMPURE_LITHIUM_INGOT);
+                        entries.add(ModItems.LITHIUM_DUST);
+                        entries.add(ModItems.LITHIUM_INGOT);
+                        entries.add(ModItems.STEEL_DUST);
+                        entries.add(ModItems.STEEL_INGOT);
+                        entries.add(ModItems.DIAMOND_GOLD_INGOT);
+
+                        entries.add(ModItems.EFFICIENCY_MODIFIER);
+                        entries.add(ModItems.FORTUNE_MODIFIER);
+                        entries.add(ModItems.SILK_TOUCH_MODIFIER);
                     }))
                     .build());
 
