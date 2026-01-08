@@ -61,7 +61,7 @@ public class PoweredPickaxeScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(inventory, 2, 10, 57) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return stack.isIn(ModTags.Items.ModifierItems);
+                return stack.isOf(ModItems.SILK_TOUCH_MODIFIER);
             }
         });
         this.addSlot(new Slot(inventory, 3, 80, 35) {
