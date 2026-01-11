@@ -1,36 +1,116 @@
-# Automatically build the project and run any configured tests for every push
-# and submitted pull request. This can help catch issues that only occur on
-# certain platforms or Java versions, and provides a first line of defence
-# against bad commits.
+name: Auto-Release Every Commit
 
-name: build
 on:
-  pull_request:
-    paths-ignore:
-      - 'README.md'
   push:
+    branches:
+      - master
     paths-ignore:
       - 'README.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
-  build:
-    runs-on: ubuntu-24.04
+  build-and-release:
+    runs-on: ubuntu-latest
+    
     steps:
-      - name: checkout repository
+      - name: Checkout Code
         uses: actions/checkout@v4
-      - name: validate gradle wrapper
-        uses: gradle/actions/wrapper-validation@v4
-      - name: setup jdk
+        with:
+          fetch-depth: 0 # CRITICAL: Required to count commits for the patch number
+
+      - name: Extract Metadata
+        id: meta
+        run: |
+          # 1. Get Version from gradle.properties
+          VERSION=$(grep "mod_version" gradle.properties | cut -d'=' -f2 | tr -d '[:space:]')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+          # 2. Get Commit Message (First line only)
+          COMMIT_MSG=$(git log -1 --pretty=%s)
+          echo "COMMIT_MSG=$COMMIT_MSG" >> $GITHUB_ENV
+
+          # 3. Get Short SHA (For unique Tag ID)
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
+
+          # 4. Get Patch Number (Commits since version change)
+          VER_LINE=$(grep -n "mod_version" gradle.properties | head -n 1 | cut -d: -f1)
+          START_COMMIT=$(git blame -l -L $VER_LINE,$VER_LINE gradle.properties | awk '{print $1}' | tr -d '^')
+          
+          # Count commits from start to HEAD. 
+          # Note: "git rev-list START..HEAD" counts commits AFTER start.
+          COUNT=$(git rev-list --count $START_COMMIT..HEAD)
+          
+          # If count is 0, it means we are ON the commit that changed the version.
+          # This is the first build for this version.
+          if [ "$COUNT" -eq "0" ]; then
+             RELEASE_TITLE="${VERSION} - Release"
+             # Also set PATCH_NUM to 1 just in case we need it elsewhere
+             PATCH_NUM=1
+          else
+             # Add 1 because the count is exclusive of the start commit
+             PATCH_NUM=$((COUNT + 1))
+             RELEASE_TITLE="${VERSION} - Patch #${PATCH_NUM}"
+          fi
+          
+          echo "PATCH_NUM=$PATCH_NUM" >> $GITHUB_ENV
+          echo "RELEASE_TITLE=$RELEASE_TITLE" >> $GITHUB_ENV
+
+      - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
-          distribution: 'microsoft'
-      - name: make gradle wrapper executable
-        run: chmod +x ./gradlew
-      - name: build
-        run: ./gradlew build
-      - name: capture build artifacts
-        uses: actions/upload-artifact@v4
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build with Gradle
+        run: |
+          chmod +x gradlew
+          ./gradlew build
+
+      # --- RELEASE 1: The "Latest" Pointer (Runs FIRST to be older timestamp) ---
+      - name: Delete Old 'latest' Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete latest --cleanup-tag -y || echo "No existing 'latest' release to delete"
+
+      - name: Update 'latest' Tag
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -d latest || true
+          git push origin :refs/tags/latest || true
+          git tag latest
+          git push origin latest
+
+      - name: Publish 'Latest' Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: Artifacts
-          path: build/libs/
+          tag_name: latest
+          name: Latest Build (v${{ env.VERSION }})
+          body: "Latest build: ${{ env.RELEASE_TITLE }}"
+          files: build/libs/*.jar
+          draft: false
+          prerelease: false
+          make_latest: false # Do NOT mark this as the official "Latest" in UI
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # --- RELEASE 2: The Specific Commit Release (Runs LAST to be newest timestamp) ---
+      - name: Create Specific Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION }}-${{ env.SHORT_SHA }}
+          name: "${{ env.RELEASE_TITLE }}"
+          files: build/libs/*.jar
+          draft: false
+          prerelease: false
+          make_latest: true # DO mark this as the official "Latest"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
