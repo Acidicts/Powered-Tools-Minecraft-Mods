@@ -65,7 +65,6 @@ public class ModModelProvider extends FabricModelProvider {
 
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
-        itemModelGenerator.register(ModItems.POWERED_PICKAXE, Models.HANDHELD);
 
         for (BatteryItem item : batteryItems) {
             itemModelGenerator.register(item, Models.GENERATED);

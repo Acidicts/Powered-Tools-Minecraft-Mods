@@ -15,9 +15,9 @@ public class ModItemGroups {
     public static final ItemGroup POWERED_TOOLS_GROUP = Registry.register(Registries.ITEM_GROUP,
             Identifier.of(PoweredTools.MOD_ID, "powered_tools_group"),
             FabricItemGroup.builder().displayName(Text.translatable("itemgroup.poweredtools.powered_tools_group"))
-                    .icon(() -> new ItemStack(ModItems.POWERED_PICKAXE))
+                    .icon(() -> new ItemStack(ModItems.POWERED_PICKAXE_1))
                     .entries(((displayContext, entries) -> {
-                        entries.add(ModItems.POWERED_PICKAXE);
+                        entries.add(ModItems.POWERED_PICKAXE_1);
 
                         entries.add(ModBlocks.CHARGER);
                         entries.add(ModBlocks.RECYCLER);

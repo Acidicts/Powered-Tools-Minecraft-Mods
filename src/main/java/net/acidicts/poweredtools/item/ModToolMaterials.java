@@ -10,7 +10,11 @@ import net.minecraft.registry.tag.TagKey;
 import java.util.function.Supplier;
 
 public enum ModToolMaterials implements ToolMaterial {
-    PoweredTool(BlockTags.INCORRECT_FOR_NETHERITE_TOOL, Integer.MAX_VALUE, 10.0F, 4.0F, 12, () -> Ingredient.empty());
+    PoweredTool_T1(BlockTags.INCORRECT_FOR_NETHERITE_TOOL, Integer.MAX_VALUE, 10.0F, 4.0F, 12, () -> Ingredient.empty()),
+    PoweredTool_T2(BlockTags.INCORRECT_FOR_NETHERITE_TOOL, Integer.MAX_VALUE, 12.0F, 4.0F, 12, () -> Ingredient.empty()),
+    PoweredTool_T3(BlockTags.INCORRECT_FOR_NETHERITE_TOOL, Integer.MAX_VALUE, 14.0F, 4.0F, 12, () -> Ingredient.empty()),
+    PoweredTool_T4(BlockTags.INCORRECT_FOR_NETHERITE_TOOL, Integer.MAX_VALUE, 16.0F, 4.0F, 12, () -> Ingredient.empty()),
+    PoweredTool_T5(BlockTags.INCORRECT_FOR_NETHERITE_TOOL, Integer.MAX_VALUE, 20.0F, 4.0F, 12, () -> Ingredient.empty());
 
     private final TagKey<Block> inverseTag;
     private final int itemDurability;

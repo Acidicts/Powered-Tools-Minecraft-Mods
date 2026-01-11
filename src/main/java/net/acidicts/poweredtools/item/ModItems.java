@@ -13,8 +13,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class ModItems {
-    public static final Item POWERED_PICKAXE = registerItem("powered_pickaxe",
-            new Powered_Pickaxe(new Item.Settings()));
+    public static final Item POWERED_PICKAXE_1 = registerItem("powered_pickaxe",
+            new Powered_Pickaxe(ModToolMaterials.PoweredTool_T1, new Item.Settings()));
 
     public static final Item BATTERY_TIER_0 = registerItem("battery_0",
             new BatteryItem(ModBatteryMaterials.Stone, new Item.Settings()));

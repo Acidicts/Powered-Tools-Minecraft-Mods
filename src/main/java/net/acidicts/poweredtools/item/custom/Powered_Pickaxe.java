@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PickaxeItem;
+import net.minecraft.item.ToolMaterial;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.ScreenHandler;
@@ -29,8 +30,8 @@ public class Powered_Pickaxe extends PickaxeItem {
 
     private static final int ENERGY_PER_USE = 10;
 
-    public Powered_Pickaxe(Settings settings) {
-        super(ModToolMaterials.PoweredTool, settings.maxCount(1));
+    public Powered_Pickaxe(ToolMaterial material, Settings settings) {
+        super(material, settings.maxCount(1));
     }
 
     private void initializeBattery(ItemStack stack) {

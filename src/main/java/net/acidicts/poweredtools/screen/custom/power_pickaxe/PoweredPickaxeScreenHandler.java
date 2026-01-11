@@ -5,7 +5,6 @@ import net.acidicts.poweredtools.item.ModItems;
 import net.acidicts.poweredtools.item.custom.BatteryItem;
 import net.acidicts.poweredtools.item.custom.Powered_Pickaxe;
 import net.acidicts.poweredtools.screen.ModScreenHandlers;
-import net.acidicts.poweredtools.tags.ModTags;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
