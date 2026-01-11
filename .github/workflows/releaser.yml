@@ -19,39 +19,30 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # CRITICAL: Required to count commits for the patch number
+          fetch-depth: 0
 
       - name: Extract Metadata
         id: meta
         run: |
-          # 1. Get Version from gradle.properties
           VERSION=$(grep "mod_version" gradle.properties | cut -d'=' -f2 | tr -d '[:space:]')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-          # 2. Get Commit Message (First line only)
           COMMIT_MSG=$(git log -1 --pretty=%s)
           echo "COMMIT_MSG=$COMMIT_MSG" >> $GITHUB_ENV
 
-          # 3. Get Short SHA (For unique Tag ID)
+          # We still get SHA for metadata, but won't use it for the tag
           SHORT_SHA=$(git rev-parse --short HEAD)
           echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
 
-          # 4. Get Patch Number (Commits since version change)
           VER_LINE=$(grep -n "mod_version" gradle.properties | head -n 1 | cut -d: -f1)
           START_COMMIT=$(git blame -l -L $VER_LINE,$VER_LINE gradle.properties | awk '{print $1}' | tr -d '^')
           
-          # Count commits from start to HEAD. 
-          # Note: "git rev-list START..HEAD" counts commits AFTER start.
           COUNT=$(git rev-list --count $START_COMMIT..HEAD)
           
-          # If count is 0, it means we are ON the commit that changed the version.
-          # This is the first build for this version.
           if [ "$COUNT" -eq "0" ]; then
              RELEASE_TITLE="${VERSION} - Release"
-             # Also set PATCH_NUM to 1 just in case we need it elsewhere
              PATCH_NUM=1
           else
-             # Add 1 because the count is exclusive of the start commit
              PATCH_NUM=$((COUNT + 1))
              RELEASE_TITLE="${VERSION} - Patch #${PATCH_NUM}"
           fi
@@ -73,47 +64,25 @@ jobs:
           chmod +x gradlew
           ./gradlew build
 
-      # --- RELEASE 1: The Specific Commit Release ---
-      - name: Create Specific Release
+      # --- CONSOLIDATED RELEASE ---
+      # Uses the Patch Number in the tag (e.g., v0.0.2.60) to ensure correct sorting.
+      - name: Publish Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ env.VERSION }}-${{ env.SHORT_SHA }}
+          # CHANGED: Tag is now based on VERSION and sequential PATCH_NUM
+          tag_name: v${{ env.VERSION }}.${{ env.PATCH_NUM }}
           
-          # Use the dynamic title we created above
           name: "${{ env.RELEASE_TITLE }}"
-          
-          files: build/libs/*.jar
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # --- RELEASE 2: The "Latest" Release ---
-      - name: Delete Old 'latest' Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release delete latest --cleanup-tag -y || echo "No existing 'latest' release to delete"
-
-      - name: Update 'latest' Tag
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -d latest || true
-          git push origin :refs/tags/latest || true
-          git tag latest
-          git push origin latest
-
-      - name: Publish 'Latest' Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: latest
-          name: Latest Build (v${{ env.VERSION }})
-          # Update body to show the correct title context
-          body: "Latest build: ${{ env.RELEASE_TITLE }}"
           files: build/libs/*.jar
           draft: false
           prerelease: false
           make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update 'latest' Git Tag
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -f latest
+          git push origin -f latest || true
