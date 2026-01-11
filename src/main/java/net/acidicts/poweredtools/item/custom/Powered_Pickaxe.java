@@ -6,6 +6,8 @@ import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -15,11 +17,14 @@ import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -297,9 +302,25 @@ public class Powered_Pickaxe extends PickaxeItem {
         setBatteryData(stack, nbt);
     }
 
-    public void setModifierType(ItemStack stack, String str) {
+    public String getGenericModifierType(ItemStack stack) {
+        NbtCompound nbt = getBatteryData(stack);
+        return nbt.getString("pickaxe.modifier.modifier.type");
+    }
+
+    public int getGenericModifierNum(ItemStack stack) {
+        NbtCompound nbt = getBatteryData(stack);
+        return nbt.getInt("pickaxe.modifier.modifier.num");
+    }
+
+    public void setGenericModifierType(ItemStack stack, String str) {
         NbtCompound nbt = getBatteryData(stack);
         nbt.putString("pickaxe.modifier.modifier.type", str);
+        setBatteryData(stack, nbt);
+    }
+
+    public void setGenericModifierAmount(ItemStack stack, int num) {
+        NbtCompound nbt = getBatteryData(stack);
+        nbt.putInt("pickaxe.modifier.modifier.num", num);
         setBatteryData(stack, nbt);
     }
 
@@ -368,5 +389,21 @@ public class Powered_Pickaxe extends PickaxeItem {
             tooltip.add(Text.literal("No battery installed").formatted(Formatting.RED));
             tooltip.add(Text.literal("Sneak + right-click to open GUI").formatted(Formatting.GRAY).formatted(Formatting.ITALIC));
         }
+    }
+
+    public RegistryKey<Enchantment> getEnchantmentFromGenericType(String genericType) {
+        if (genericType == null || genericType.isEmpty()) return null;
+        Identifier id = Identifier.tryParse(genericType);
+        if (id == null) return null;
+
+        String path = id.getPath();
+        if (path.endsWith("_modifier")) {
+            String enchantName = path.substring(0, path.length() - "_modifier".length());
+            // Mapping for standard vanilla enchantments provided by mod items
+            if (enchantName.equals("silk_touch")) return Enchantments.SILK_TOUCH;
+            // For others, we assume minecraft namespace for now as per common vanilla enchants
+            return RegistryKey.of(RegistryKeys.ENCHANTMENT, Identifier.of("minecraft", enchantName));
+        }
+        return null;
     }
 }

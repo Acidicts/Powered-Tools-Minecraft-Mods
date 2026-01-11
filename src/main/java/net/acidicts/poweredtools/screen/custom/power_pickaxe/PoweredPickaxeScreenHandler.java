@@ -5,6 +5,7 @@ import net.acidicts.poweredtools.item.ModItems;
 import net.acidicts.poweredtools.item.custom.BatteryItem;
 import net.acidicts.poweredtools.item.custom.Powered_Pickaxe;
 import net.acidicts.poweredtools.screen.ModScreenHandlers;
+import net.acidicts.poweredtools.tags.ModTags;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ItemEnchantmentsComponent;
@@ -18,11 +19,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.Registries;
 import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.inventory.InventoryChangedListener;
+import net.minecraft.util.Identifier;
 import team.reborn.energy.api.EnergyStorage;
 
 public class PoweredPickaxeScreenHandler extends ScreenHandler {
@@ -60,7 +63,7 @@ public class PoweredPickaxeScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(inventory, 2, 10, 57) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return stack.isOf(ModItems.SILK_TOUCH_MODIFIER);
+                return stack.isIn(ModTags.Items.ModifierItems) && !stack.isOf(ModItems.EFFICIENCY_MODIFIER) && !stack.isOf(ModItems.FORTUNE_MODIFIER);
             }
         });
         this.addSlot(new Slot(inventory, 3, 80, 35) {
@@ -86,11 +89,24 @@ public class PoweredPickaxeScreenHandler extends ScreenHandler {
                 modifier.setCount(pickaxe.getFortuneModifiers(stack));
                 inventory.setStack(1, modifier);
             }
-            if (pickaxe.getSilkTouchModifier(stack) > 0) {
-                ItemStack modifier = ModItems.SILK_TOUCH_MODIFIER.getDefaultStack();
-                modifier.setCount(pickaxe.getSilkTouchModifier(stack));
-                inventory.setStack(2, modifier);
+
+            String genericType = pickaxe.getGenericModifierType(stack);
+            int genericNum = pickaxe.getGenericModifierNum(stack);
+            if (genericType != null && !genericType.isEmpty() && genericNum > 0) {
+                Identifier id = Identifier.tryParse(genericType);
+                if (id != null) {
+                    net.minecraft.item.Item item = Registries.ITEM.get(id);
+                    if (item != net.minecraft.item.Items.AIR) {
+                        ItemStack modifier = new ItemStack(item, genericNum);
+                        inventory.setStack(2, modifier);
+                    }
+                }
+            } else if(pickaxe.getSilkTouchModifier(stack) > 0) {
+                 ItemStack modifier = ModItems.SILK_TOUCH_MODIFIER.getDefaultStack();
+                 modifier.setCount(pickaxe.getSilkTouchModifier(stack));
+                 inventory.setStack(2, modifier);
             }
+
             PoweredTools.LOGGER.info("{} {} {}", pickaxe.getSpeedModifiers(stack), pickaxe.getFortuneModifiers(stack), pickaxe.getSilkTouchModifier(stack));
             syncEnchantments();
         }
@@ -129,13 +145,21 @@ public class PoweredPickaxeScreenHandler extends ScreenHandler {
             } else if (fortuneStack.isOf(ModItems.FORTUNE_MODIFIER)) {
                 pickaxe.setFortuneModifier(stack, fortuneStack.getCount());
             }
+
             if (modifierStack.isEmpty()) {
                 pickaxe.setSilkTouchModifier(stack, 0);
-            } else if (modifierStack.isOf(ModItems.SILK_TOUCH_MODIFIER)) {
-                pickaxe.setSilkTouchModifier(stack, modifierStack.getCount());
-                pickaxe.setModifierType(stack, modifierStack.getItem().toString());
+                pickaxe.setGenericModifierType(stack, "");
+                pickaxe.setGenericModifierAmount(stack, 0);
             } else {
-                pickaxe.setSilkTouchModifier(stack, 0);
+                pickaxe.setGenericModifierType(stack, Registries.ITEM.getId(modifierStack.getItem()).toString());
+                pickaxe.setGenericModifierAmount(stack, modifierStack.getCount());
+
+                // Keep Silk Touch legacy field updated just in case logic depends on it elsewhere
+                if (modifierStack.isOf(ModItems.SILK_TOUCH_MODIFIER)) {
+                    pickaxe.setSilkTouchModifier(stack, modifierStack.getCount());
+                } else {
+                    pickaxe.setSilkTouchModifier(stack, 0);
+                }
             }
 
             syncEnchantments();
@@ -151,7 +175,20 @@ public class PoweredPickaxeScreenHandler extends ScreenHandler {
 
             addEnchantment(builder, registry, Enchantments.EFFICIENCY, pickaxe.getSpeedModifiers(stack));
             addEnchantment(builder, registry, Enchantments.FORTUNE, pickaxe.getFortuneModifiers(stack));
-            addEnchantment(builder, registry, Enchantments.SILK_TOUCH, pickaxe.getSilkTouchModifier(stack));
+
+            // Add Generic Modifier
+            String genericType = pickaxe.getGenericModifierType(stack);
+            int genericNum = pickaxe.getGenericModifierNum(stack);
+            if (genericType != null && !genericType.isEmpty() && genericNum > 0) {
+                 RegistryKey<Enchantment> enchantKey = pickaxe.getEnchantmentFromGenericType(genericType);
+                 if (enchantKey != null) {
+                     addEnchantment(builder, registry, enchantKey, genericNum);
+                 }
+            }
+
+            // Legacy fallbacks can be handled via generic logic as modifiers are items now.
+            // But if we want to be safe, we can add Silk Touch if not generic?
+            // Since Silk Touch *is* a generic modifier now (GenericType is set), we don't need double add.
 
             stack.set(DataComponentTypes.ENCHANTMENTS, builder.build().withShowInTooltip(false));
             this.sendContentUpdates();
