@@ -30,6 +30,7 @@ jobs:
           COMMIT_MSG=$(git log -1 --pretty=%s)
           echo "COMMIT_MSG=$COMMIT_MSG" >> $GITHUB_ENV
 
+          # We still get SHA for metadata, but won't use it for the tag
           SHORT_SHA=$(git rev-parse --short HEAD)
           echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_ENV
 
@@ -63,20 +64,22 @@ jobs:
           chmod +x gradlew
           ./gradlew build
 
-      # --- CONSOLIDATED RELEASE: Create Specific Release & Mark as Latest ---
+      # --- CONSOLIDATED RELEASE ---
+      # Uses the Patch Number in the tag (e.g., v0.0.2.60) to ensure correct sorting.
       - name: Publish Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ env.VERSION }}-${{ env.SHORT_SHA }}
+          # CHANGED: Tag is now based on VERSION and sequential PATCH_NUM
+          tag_name: v${{ env.VERSION }}.${{ env.PATCH_NUM }}
+          
           name: "${{ env.RELEASE_TITLE }}"
           files: build/libs/*.jar
           draft: false
           prerelease: false
-          make_latest: true  # CRITICAL CHANGE: This ensures this fresh release is the "Latest"
+          make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # --- OPTIONAL: Keep 'latest' git tag moving (without a duplicate release) ---
       - name: Update 'latest' Git Tag
         run: |
           git config --global user.name "github-actions[bot]"
