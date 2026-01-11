@@ -48,12 +48,16 @@ jobs:
           # This is the first build for this version.
           if [ "$COUNT" -eq "0" ]; then
              RELEASE_TITLE="${VERSION} - Release"
-             # Also set PATCH_NUM to 1 just in case we need it elsewhere
-             PATCH_NUM=1
+             # Also set PATCH_NUM to 0 just in case we need it elsewhere
+             PATCH_NUM=0
+             echo "IS_PRERELEASE=false" >> $GITHUB_ENV
+             echo "MAKE_LATEST=true" >> $GITHUB_ENV
           else
              # Add 1 because the count is exclusive of the start commit
              PATCH_NUM=$((COUNT + 1))
              RELEASE_TITLE="${VERSION} - Patch #${PATCH_NUM}"
+             echo "IS_PRERELEASE=true" >> $GITHUB_ENV
+             echo "MAKE_LATEST=false" >> $GITHUB_ENV
           fi
           
           echo "PATCH_NUM=$PATCH_NUM" >> $GITHUB_ENV
@@ -73,36 +77,6 @@ jobs:
           chmod +x gradlew
           ./gradlew build
 
-      # --- RELEASE 1: The "Latest" Pointer (Runs FIRST to be older timestamp) ---
-      - name: Delete Old 'latest' Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release delete latest --cleanup-tag -y || echo "No existing 'latest' release to delete"
-
-      - name: Update 'latest' Tag
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -d latest || true
-          git push origin :refs/tags/latest || true
-          git tag latest
-          git push origin latest
-
-      - name: Publish 'Latest' Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: latest
-          name: Latest Build (v${{ env.VERSION }})
-          body: "Latest build: ${{ env.RELEASE_TITLE }}"
-          files: build/libs/*.jar
-          draft: false
-          prerelease: false
-          make_latest: false # Do NOT mark this as the official "Latest" in UI
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # --- RELEASE 2: The Specific Commit Release (Runs LAST to be newest timestamp) ---
       - name: Create Specific Release
         uses: softprops/action-gh-release@v2
         with:
@@ -110,7 +84,7 @@ jobs:
           name: "${{ env.RELEASE_TITLE }}"
           files: build/libs/*.jar
           draft: false
-          prerelease: false
-          make_latest: true # DO mark this as the official "Latest"
+          prerelease: ${{ env.IS_PRERELEASE }}
+          make_latest: ${{ env.MAKE_LATEST }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
