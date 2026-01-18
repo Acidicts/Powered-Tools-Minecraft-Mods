@@ -10,6 +10,8 @@ Instead of charging the tool directly you can charge a battery then swap the too
 ## Installation
 I recommend using [Prism Launcher](https://prismlauncher.org/) to install Minecraft mods.
 
+YOU MUST HAVE JAVA 21+ INSTALLED !!!
+
 1. Download and install [Prism Launcher](https://prismlauncher.org/).
 2. Open Prism Launcher and create a new instance with the following settings:
     - Version: `1.21.1`
