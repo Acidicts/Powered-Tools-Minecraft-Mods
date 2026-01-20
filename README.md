@@ -6,9 +6,15 @@ First of all the "s" at the end was a typo.
 This is a minecraft mod which brings in electrically powered tools with a simple concept of batteries.
 Instead of charging the tool directly you can charge a battery then swap the tools' battery.
 
+## Dependencies
+- Fabric API
+- Geckolib
+
 ---
 ## Installation
 I recommend using [Prism Launcher](https://prismlauncher.org/) to install Minecraft mods.
+
+YOU MUST HAVE JAVA 21+ INSTALLED !!!
 
 1. Download and install [Prism Launcher](https://prismlauncher.org/).
 2. Open Prism Launcher and create a new instance with the following settings:
@@ -20,7 +26,7 @@ I recommend using [Prism Launcher](https://prismlauncher.org/) to install Minecr
 4. In the "Version" tab, click "Install Fabric Loader" if it's not already installed.
 5. Go to the "Mods" tab and click "Open Mods Folder".
 6.
-  - Press Add Mods and select to download from [Modrinth](https://modrinth.com/project/powered_tools)
+  - ~~Press Add Mods and select to download from [Modrinth](https://modrinth.com/project/powered_tools)~~ Use Github releases due to automated builds
   - If the link results in 404 go to [releases](https://github.com/Acidicts/Powered-Tools-Minecraft-Mods/releases) and downloaded either the [latest build](https://github.com/Acidicts/Powered-Tools-Minecraft-Mods/releases/tag/latest) or latest non-patch
 7. Add and download the required dependencies:
     - [Fabric API](https://modrinth.com/project/fabric-api) 
