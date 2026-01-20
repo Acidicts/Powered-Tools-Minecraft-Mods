@@ -7,6 +7,7 @@ import net.acidicts.poweredtools.item.ModItems;
 import net.acidicts.poweredtools.particle.ModParticles;
 import net.acidicts.poweredtools.recipe.ModRecipes;
 import net.acidicts.poweredtools.world.gen.ModWorldGeneration;
+import net.acidicts.poweredtools.world.ModPlacedFeatures;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
