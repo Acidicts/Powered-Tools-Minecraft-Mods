@@ -1,5 +1,6 @@
 {
   "values": [
-    "poweredtools:charger"
+    "poweredtools:charger",
+    "poweredtools:lithium_ore"
   ]
 }

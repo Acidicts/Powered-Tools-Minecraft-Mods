@@ -1,4 +1,4 @@
-// 1.21.1	2026-01-20T17:35:04.2856999	PoweredTools/Model Definitions
+// 1.21.1	2026-01-22T21:04:09.8594919	PoweredTools/Model Definitions
 7e68601bafe30e219fef2dbf257b1d1812ee4938 assets\poweredtools\models\item\broken_battery_2.json
 4c51c1f3c7fab703319de79a69feb36e7adb8072 assets\poweredtools\models\item\coal_generator.json
 fbee902a48e3c7fc0b3b3ec00d309d3aa83567a5 assets\poweredtools\models\item\lithium_ore.json
@@ -9,8 +9,8 @@ f608ee02372018c029d30623e6590bb56960b855 assets\poweredtools\models\item\lithium
 474c917cf04e4136ee7a40be930ff04e51bf7d72 assets\poweredtools\models\item\broken_battery_3.json
 69b3cdd3f499edbf5b34ea1d67e81fcf1d257c0b assets\poweredtools\models\item\impure_lithium.json
 aa5f38a4221bd74d77d7fd3c37e179654787f974 assets\poweredtools\models\item\battery_4.json
-d210158441a001b061ca3557950de901dd89b195 assets\poweredtools\models\block\lithium_ore.json
 6c4d649d047a02025fced02f86459ac86ae99059 assets\poweredtools\models\item\battery_1.json
+d210158441a001b061ca3557950de901dd89b195 assets\poweredtools\models\block\lithium_ore.json
 45b7bfc72b8f88749861889255df6169461aea96 assets\poweredtools\blockstates\alloy_smelter.json
 45e9ae04aeef2eeac681b90759db271a6d0ea40f assets\poweredtools\models\item\alloy_smelter.json
 94fda95672cb848b6bd1c08afb88652e47412610 assets\poweredtools\blockstates\lithium_ore.json

@@ -1,3 +1,3 @@
-// 1.21.1	2026-01-20T17:35:04.2856999	PoweredTools/Tags for minecraft:block
-f00f8d0fdae278e41fd93bbff5a4a338abc5c706 data\minecraft\tags\block\mineable\pickaxe.json
-f00f8d0fdae278e41fd93bbff5a4a338abc5c706 data\minecraft\tags\block\needs_iron_tool.json
+// 1.21.1	2026-01-22T21:04:09.8594919	PoweredTools/Tags for minecraft:block
+c3b8354207f4266a39a1c82783e691e2656c6bcd data\minecraft\tags\block\mineable\pickaxe.json
+c3b8354207f4266a39a1c82783e691e2656c6bcd data\minecraft\tags\block\needs_iron_tool.json
