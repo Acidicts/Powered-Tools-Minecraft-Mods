@@ -9,6 +9,7 @@ import net.acidicts.poweredtools.screen.custom.charger.ChargerScreen;
 import net.acidicts.poweredtools.screen.custom.coal_generator.CoalGeneratorScreen;
 import net.acidicts.poweredtools.screen.custom.power_pickaxe.PoweredPickaxeScreen;
 import net.acidicts.poweredtools.screen.custom.recycler.RecyclerScreen;
+import net.acidicts.poweredtools.screen.custom.shieldcore.power_pickaxe.ShieldCoreScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
@@ -26,6 +27,9 @@ public class PoweredToolsClient implements ClientModInitializer {
         HandledScreens.register(ModScreenHandlers.CHARGER_SCREEN_HANDLER, ChargerScreen::new);
 
         HandledScreens.register(ModScreenHandlers.POWERED_PICKAXE_SCREEN_HANDLER, PoweredPickaxeScreen::new);
+
+
+        HandledScreens.register(ModScreenHandlers.SHIELD_CORE_SCREEN_HANDLER, ShieldCoreScreen::new);
 
         ParticleFactoryRegistry.getInstance().register(ModParticles.ELECTRIC_SPARK, FlameParticle.Factory::new);
     }

@@ -25,6 +25,10 @@
   "item.poweredtools.fortune_modifier": "Fortune Modifier",
   "item.poweredtools.silk_touch_modifier": "Silk Touch Modifier",
 
+  "item.poweredtools.fire_shield_core": "Fire Shield Core",
+  "item.poweredtools.water_shield_core": "Water Shield Core",
+  "item.poweredtools.damage_shield_core": "Damage Shield Core",
+
   "itemgroup.poweredtools.powered_tools_group": "Powered Tools",
 
   "block.poweredtools.lithium_ore": "Lithium Ore",

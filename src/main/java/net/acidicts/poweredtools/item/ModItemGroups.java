@@ -49,6 +49,10 @@ public class ModItemGroups {
                         entries.add(ModItems.EFFICIENCY_MODIFIER);
                         entries.add(ModItems.FORTUNE_MODIFIER);
                         entries.add(ModItems.SILK_TOUCH_MODIFIER);
+
+                        entries.add(ModItems.FIRE_SHIELD_CORE);
+                        entries.add(ModItems.WATER_SHIELD_CORE);
+                        entries.add(ModItems.DAMAGE_SHIELD_CORE);
                     }))
                     .build());
 

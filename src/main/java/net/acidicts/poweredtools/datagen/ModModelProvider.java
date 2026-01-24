@@ -1,8 +1,6 @@
 package net.acidicts.poweredtools.datagen;
 
-import me.shedaniel.errornotifier.launch.early.Texture;
 import net.acidicts.poweredtools.block.ModBlocks;
-import net.acidicts.poweredtools.block.custom.Recycler;
 import net.acidicts.poweredtools.item.ModItems;
 import net.acidicts.poweredtools.item.custom.BatteryItem;
 import net.acidicts.poweredtools.item.custom.BrokenBatteryItem;
@@ -10,9 +8,6 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.data.client.*;
 import net.minecraft.item.Item;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Direction;
 
 import java.util.List;
 
@@ -48,6 +43,11 @@ public class ModModelProvider extends FabricModelProvider {
             ModItems.FORTUNE_MODIFIER,
             ModItems.SILK_TOUCH_MODIFIER
     );
+    public final List<Item> shieldCores = List.of(
+        ModItems.FIRE_SHIELD_CORE,
+        ModItems.WATER_SHIELD_CORE,
+        ModItems.DAMAGE_SHIELD_CORE
+    );
 
 
     public ModModelProvider(FabricDataOutput output) {
@@ -76,6 +76,9 @@ public class ModModelProvider extends FabricModelProvider {
             itemModelGenerator.register(item, Models.GENERATED);
         }
         for (Item item : modifiers) {
+            itemModelGenerator.register(item, Models.GENERATED);
+        }
+        for (Item item : shieldCores) {
             itemModelGenerator.register(item, Models.GENERATED);
         }
     }

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "poweredtools:item/fire_shield_core"
+  }
+}

@@ -1,4 +1,4 @@
-// 1.21.1	2026-01-22T21:04:09.8594919	PoweredTools/Model Definitions
+// 1.21.1	2026-01-24T13:48:53.9959259	PoweredTools/Model Definitions
 7e68601bafe30e219fef2dbf257b1d1812ee4938 assets\poweredtools\models\item\broken_battery_2.json
 4c51c1f3c7fab703319de79a69feb36e7adb8072 assets\poweredtools\models\item\coal_generator.json
 fbee902a48e3c7fc0b3b3ec00d309d3aa83567a5 assets\poweredtools\models\item\lithium_ore.json
@@ -6,9 +6,12 @@ e338e6fd1bb5dcf1308fc7127604b28b4979c9b4 assets\poweredtools\models\item\lithium
 29fc13495d15b6e8c66d85138b73b929ca70ca63 assets\poweredtools\models\item\steel_dust.json
 f608ee02372018c029d30623e6590bb56960b855 assets\poweredtools\models\item\lithium_ingot.json
 7f28afa87410d436fae8a3a5bed3d9c9b29afff7 assets\poweredtools\models\item\broken_battery_0.json
+84ee7b12399471481929694ba05053bf090a7070 assets\poweredtools\models\item\damage_shield_core.json
 474c917cf04e4136ee7a40be930ff04e51bf7d72 assets\poweredtools\models\item\broken_battery_3.json
+31098ea3386cac470fdbcfa5db8e5b841933c818 assets\poweredtools\models\item\water_shield_core.json
 69b3cdd3f499edbf5b34ea1d67e81fcf1d257c0b assets\poweredtools\models\item\impure_lithium.json
 aa5f38a4221bd74d77d7fd3c37e179654787f974 assets\poweredtools\models\item\battery_4.json
+a53384b33c24e4b96bbb605fa30901a0ad9aed0c assets\poweredtools\models\item\fire_shield_core.json
 6c4d649d047a02025fced02f86459ac86ae99059 assets\poweredtools\models\item\battery_1.json
 d210158441a001b061ca3557950de901dd89b195 assets\poweredtools\models\block\lithium_ore.json
 45b7bfc72b8f88749861889255df6169461aea96 assets\poweredtools\blockstates\alloy_smelter.json
@@ -17,8 +20,8 @@ d210158441a001b061ca3557950de901dd89b195 assets\poweredtools\models\block\lithiu
 3a4974c4d2eddbd3b47b1e1f3150c1b35f14d45a assets\poweredtools\models\item\battery_3.json
 a53a424fd68cfed7d3b2116f7e31d3f081e8178d assets\poweredtools\models\item\efficiency_modifier.json
 a543f2ba721528295d3324196314209b117e8908 assets\poweredtools\models\item\broken_battery_1.json
-f9ad86d3c851f1f646a35c4fb7e6938b2c50fc75 assets\poweredtools\models\item\broken_battery_4.json
 82a9870c0893efb22eb403e54895fb7623de3e3a assets\poweredtools\models\item\fortune_modifier.json
+f9ad86d3c851f1f646a35c4fb7e6938b2c50fc75 assets\poweredtools\models\item\broken_battery_4.json
 817bb889c5113311486da6a079e09a83e44bf8a2 assets\poweredtools\models\item\battery_0.json
 b43382208904d81dcf75264e44b6e283ca7351e3 assets\poweredtools\models\item\battery_5.json
 4ea58f5248f3af4be539ca80230c01d22b3beaa1 assets\poweredtools\models\item\battery_2.json

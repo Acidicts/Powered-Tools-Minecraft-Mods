@@ -6,6 +6,9 @@ import net.acidicts.poweredtools.item.custom.BatteryItem;
 import net.acidicts.poweredtools.item.custom.BrokenBatteryItem;
 import net.acidicts.poweredtools.item.custom.ModBatteryMaterials;
 import net.acidicts.poweredtools.item.custom.Powered_Pickaxe;
+import net.acidicts.poweredtools.item.custom.shieldcores.DamageShieldCore;
+import net.acidicts.poweredtools.item.custom.shieldcores.FireShieldCore;
+import net.acidicts.poweredtools.item.custom.shieldcores.WaterShieldCore;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -43,6 +46,13 @@ public class ModItems {
     public static final Item BROKEN_BATTERY_TIER_5 = registerItem("broken_battery_5",
             new BrokenBatteryItem(ModBatteryMaterials.Diamond_Gold, new Item.Settings()));
 
+
+    public static final Item FIRE_SHIELD_CORE = registerItem("fire_shield_core",
+            new FireShieldCore(new Item.Settings()));
+    public static final Item WATER_SHIELD_CORE = registerItem("water_shield_core",
+            new WaterShieldCore(new Item.Settings()));
+    public static final Item DAMAGE_SHIELD_CORE = registerItem("damage_shield_core",
+            new DamageShieldCore(new Item.Settings()));
 
     // Ingredients
 
