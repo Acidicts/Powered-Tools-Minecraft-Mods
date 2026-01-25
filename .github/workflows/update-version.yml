@@ -1,6 +1,8 @@
 name: Update Version JSON
 on:
   push:
+    branches:
+      - master
     paths:
       - 'gradle.properties'
       - '.github/workflows/update-version.json'
