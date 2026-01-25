@@ -35,7 +35,7 @@ public class DamageShieldCore extends ShieldCore {
 
     @Override
     public boolean canDamageTick(ItemStack stack, Entity entity, DamageSource source) {
-        if (entity instanceof LivingEntity livingEntity) {
+        if (entity instanceof LivingEntity livingEntity && isActive(stack)) {
             if (hasEnergy(stack, 200)) {
                 consumeEnergy(stack, 200);
                 return false;

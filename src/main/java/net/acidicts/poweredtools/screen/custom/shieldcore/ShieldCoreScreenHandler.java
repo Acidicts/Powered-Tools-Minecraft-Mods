@@ -1,6 +1,5 @@
-package net.acidicts.poweredtools.screen.custom.shieldcore.power_pickaxe;
+package net.acidicts.poweredtools.screen.custom.shieldcore;
 
-import net.acidicts.poweredtools.PoweredTools;
 import net.acidicts.poweredtools.item.custom.BatteryItem;
 import net.acidicts.poweredtools.item.custom.ShieldCore;
 import net.acidicts.poweredtools.screen.ModScreenHandlers;
@@ -25,6 +24,10 @@ public class ShieldCoreScreenHandler extends ScreenHandler {
 
     public ShieldCoreScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, playerInventory.getMainHandStack());
+    }
+
+    public ItemStack getStack() {
+        return this.stack;
     }
 
     public ShieldCoreScreenHandler(int syncId, PlayerInventory playerInventory, ItemStack stack) {

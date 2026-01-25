@@ -6,7 +6,7 @@ import net.acidicts.poweredtools.screen.custom.charger.ChargerScreenHandler;
 import net.acidicts.poweredtools.screen.custom.coal_generator.CoalGeneratorScreenHandler;
 import net.acidicts.poweredtools.screen.custom.power_pickaxe.PoweredPickaxeScreenHandler;
 import net.acidicts.poweredtools.screen.custom.recycler.RecyclerScreenHandler;
-import net.acidicts.poweredtools.screen.custom.shieldcore.power_pickaxe.ShieldCoreScreenHandler;
+import net.acidicts.poweredtools.screen.custom.shieldcore.ShieldCoreScreenHandler;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;

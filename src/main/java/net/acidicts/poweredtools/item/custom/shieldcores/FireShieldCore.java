@@ -34,8 +34,7 @@ public class FireShieldCore extends ShieldCore {
 
     @Override
     public boolean canDamageTick(ItemStack stack, Entity entity, DamageSource source) {
-        if (entity instanceof LivingEntity livingEntity) {
-            // Check for fire damage - consume 50 energy
+        if (entity instanceof LivingEntity livingEntity && isActive(stack)) {
             if ((source.isOf(DamageTypes.IN_FIRE) || source.isOf(DamageTypes.ON_FIRE) || source.isOf(DamageTypes.LAVA)) && hasEnergy(stack, 50)) {
                 consumeEnergy(stack, 50);
                 return false;

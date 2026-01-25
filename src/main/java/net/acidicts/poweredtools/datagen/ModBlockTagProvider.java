@@ -18,9 +18,17 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
         getOrCreateTagBuilder(BlockTags.NEEDS_IRON_TOOL)
                 .add(ModBlocks.CHARGER)
+                .add(ModBlocks.ALLOY_SMELTER)
+                .add(ModBlocks.COAL_GENERATOR)
+                .add(ModBlocks.OPEN_CHARGER)
+                .add(ModBlocks.RECYCLER)
                 .add(ModBlocks.LITHIUM_ORE);
         getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
                 .add(ModBlocks.CHARGER)
+                .add(ModBlocks.ALLOY_SMELTER)
+                .add(ModBlocks.COAL_GENERATOR)
+                .add(ModBlocks.OPEN_CHARGER)
+                .add(ModBlocks.RECYCLER)
                 .add(ModBlocks.LITHIUM_ORE);
     }
 }

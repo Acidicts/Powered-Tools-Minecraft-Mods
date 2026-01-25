@@ -1,12 +1,15 @@
-package net.acidicts.poweredtools.screen.custom.shieldcore.power_pickaxe;
+package net.acidicts.poweredtools.screen.custom.shieldcore;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.acidicts.poweredtools.PoweredTools;
+import net.acidicts.poweredtools.item.custom.ShieldCore;
+import net.acidicts.poweredtools.networking.ModMessages;
 import net.acidicts.poweredtools.screen.renderer.EnergyInfoArea;
 import net.acidicts.poweredtools.util.MouseUtil;
 import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
@@ -23,12 +26,32 @@ public class ShieldCoreScreen extends HandledScreen<ShieldCoreScreenHandler> {
         super(handler, inventory, title);
     }
 
+    // Add this field to your ShieldCoreScreen class
+    private ButtonWidget toggleButton;
+
     @Override
     protected void init() {
         super.init();
         titleX = (width - backgroundWidth) / 2;
-
         assignEnergyInfoArea();
+
+        toggleButton = ButtonWidget.builder(getToggleText(), button -> {
+            net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.send(new ModMessages.TogglePayload());
+            updateButtonText();
+        }).dimensions(x + 5, y + 60, 90, 20).build();
+
+        this.addDrawableChild(toggleButton);
+    }
+
+    private Text getToggleText() {
+        boolean active = handler.getStack().getItem() instanceof ShieldCore core && core.isActive(handler.getStack());
+        return active ? Text.literal("Toggle to Off") : Text.literal("Toggle to On");
+    }
+
+    private void updateButtonText() {
+        if (toggleButton != null) {
+            toggleButton.setMessage(getToggleText());
+        }
     }
 
     private void assignEnergyInfoArea() {
@@ -74,5 +97,11 @@ public class ShieldCoreScreen extends HandledScreen<ShieldCoreScreenHandler> {
 
     private boolean isMouseAboveArea(int pMouseX, int pMouseY, int x, int y, int offsetX, int offsetY, int width, int height) {
         return MouseUtil.isMouseOver(pMouseX, pMouseY, x + offsetX, y + offsetY, width, height);
+    }
+
+    @Override
+    protected void handledScreenTick() {
+        super.handledScreenTick();
+        updateButtonText();
     }
 }

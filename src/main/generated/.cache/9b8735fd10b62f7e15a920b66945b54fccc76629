@@ -1,3 +1,7 @@
-// 1.21.1	2026-01-24T13:48:53.9949253	PoweredTools/Block Loot Tables
+// 1.21.1	2026-01-25T11:42:11.9519934	PoweredTools/Block Loot Tables
 08fa6d9639e62b2e9bd942caeaa5d8c755416039 data\poweredtools\loot_table\blocks\lithium_ore.json
+3336f3395f1fea6e3b602cdc8b878527cf5efeb8 data\poweredtools\loot_table\blocks\alloy_smelter.json
+35c95b95c75066c321d6d8e5f793e02f1b9c9e30 data\poweredtools\loot_table\blocks\coal_generator.json
+2b2a4bde1a1c86393b28fa3ff9b81ef1ddeed22d data\poweredtools\loot_table\blocks\open_charger.json
+da02b33d3c86c7b6954e5212d68606f82880b3ef data\poweredtools\loot_table\blocks\recycler.json
 39f7c5ca5f38a6cc17a94e4a06686738c1f8fe8f data\poweredtools\loot_table\blocks\charger.json

@@ -1,7 +1,9 @@
 package net.acidicts.poweredtools.item.custom;
 
-import net.acidicts.poweredtools.screen.custom.shieldcore.power_pickaxe.ShieldCoreScreenHandler;
+import net.acidicts.poweredtools.screen.custom.shieldcore.ShieldCoreScreenHandler;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -86,5 +88,21 @@ public abstract class ShieldCore extends BatteryUsingItem {
 
     public boolean canDamageTick(ItemStack stack, Entity entity, DamageSource source) {
         return true;
+    }
+
+    public boolean isActive(ItemStack stack) {
+        NbtComponent customData = stack.get(DataComponentTypes.CUSTOM_DATA);
+        if (customData != null) {
+            return customData.copyNbt().getBoolean("IsActive");
+        }
+        return false;
+    }
+
+    @Override
+    public boolean hasGlint(ItemStack stack) {
+        if (isActive(stack)) {
+            return true;
+        }
+        return super.hasGlint(stack);
     }
 }

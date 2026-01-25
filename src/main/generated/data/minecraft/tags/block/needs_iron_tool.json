@@ -1,6 +1,10 @@
 {
   "values": [
     "poweredtools:charger",
+    "poweredtools:alloy_smelter",
+    "poweredtools:coal_generator",
+    "poweredtools:open_charger",
+    "poweredtools:recycler",
     "poweredtools:lithium_ore"
   ]
 }

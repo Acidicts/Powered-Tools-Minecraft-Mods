@@ -9,7 +9,7 @@ import net.acidicts.poweredtools.screen.custom.charger.ChargerScreen;
 import net.acidicts.poweredtools.screen.custom.coal_generator.CoalGeneratorScreen;
 import net.acidicts.poweredtools.screen.custom.power_pickaxe.PoweredPickaxeScreen;
 import net.acidicts.poweredtools.screen.custom.recycler.RecyclerScreen;
-import net.acidicts.poweredtools.screen.custom.shieldcore.power_pickaxe.ShieldCoreScreen;
+import net.acidicts.poweredtools.screen.custom.shieldcore.ShieldCoreScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;

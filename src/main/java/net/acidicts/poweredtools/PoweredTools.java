@@ -4,6 +4,7 @@ import net.acidicts.poweredtools.block.ModBlocks;
 import net.acidicts.poweredtools.block.entity.ModBlockEntities;
 import net.acidicts.poweredtools.item.ModItemGroups;
 import net.acidicts.poweredtools.item.ModItems;
+import net.acidicts.poweredtools.networking.ModMessages;
 import net.acidicts.poweredtools.particle.ModParticles;
 import net.acidicts.poweredtools.recipe.ModRecipes;
 import net.acidicts.poweredtools.world.gen.ModWorldGeneration;
@@ -24,6 +25,8 @@ public class PoweredTools implements ModInitializer {
         LOGGER.info(MOD_INFO);
 
         ModItemGroups.registerItemGroups();
+
+        ModMessages.registerServerPackets();
 
         ModItems.registerItems();
         ModBlocks.registerBlocks();

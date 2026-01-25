@@ -34,7 +34,7 @@ public class WaterShieldCore extends ShieldCore {
 
     @Override
     public boolean canDamageTick(ItemStack stack, Entity entity, DamageSource source) {
-        if (entity instanceof LivingEntity livingEntity && hasEnergy(stack, 50)) {
+        if (entity instanceof LivingEntity livingEntity && hasEnergy(stack, 50) && isActive(stack)) {
             if (source.isOf(DamageTypes.DROWN)) {
                 consumeEnergy(stack, 50);
                 return false;

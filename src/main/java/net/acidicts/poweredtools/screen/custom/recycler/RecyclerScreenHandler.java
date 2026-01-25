@@ -1,6 +1,7 @@
 package net.acidicts.poweredtools.screen.custom.recycler;
 
 import net.acidicts.poweredtools.block.entity.custom.RecyclerBlockEntity;
+import net.acidicts.poweredtools.item.ModItems;
 import net.acidicts.poweredtools.item.custom.BatteryItem;
 import net.acidicts.poweredtools.screen.ModScreenHandlers;
 import net.minecraft.block.entity.BlockEntity;
@@ -20,7 +21,7 @@ public class RecyclerScreenHandler extends ScreenHandler {
     public final RecyclerBlockEntity blockEntity;
 
     public RecyclerScreenHandler(int syncId, PlayerInventory inventory, BlockPos pos) {
-        this(syncId, inventory, inventory.player.getWorld().getBlockEntity(pos), new ArrayPropertyDelegate(2));
+        this(syncId, inventory, inventory.player.getWorld().getBlockEntity(pos), new ArrayPropertyDelegate(3));
     }
 
     public RecyclerScreenHandler(int syncId, PlayerInventory playerInventory,
@@ -31,7 +32,12 @@ public class RecyclerScreenHandler extends ScreenHandler {
         this.propertyDelegate = arrayPropertyDelegate;
         this.blockEntity = (RecyclerBlockEntity) blockEntity;
 
-        this.addSlot(new Slot(inventory, 0, 8, 62));
+        this.addSlot(new Slot(inventory, 0, 8, 62) {
+            @Override
+            public boolean canInsert(ItemStack stack) {
+                return stack.isOf(ModItems.LITHIUM_INGOT);
+            }
+        });
         this.addSlot(new Slot(inventory, 1, 54, 34));
         this.addSlot(new Slot(inventory, 2, 104, 34){
             @Override
@@ -62,6 +68,14 @@ public class RecyclerScreenHandler extends ScreenHandler {
         int arrowWidth = 24;
 
         return maxProgress != 0 && progress != 0 ? progress * arrowWidth / maxProgress : 0;
+    }
+
+    public int getLithiumMb() {
+        return this.propertyDelegate.get(2);
+    }
+
+    public int getMaxLithiumMb() {
+        return 10000; // matches block entity's MAX_LITHIUM_MB
     }
 
     @Override

@@ -47,8 +47,15 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
     private int maxProgress = 72;
     private final int DEFAULT_MAX_PROGRESS = 72;
 
+    // Energy constants
     private static final int ENERGY_CRAFTING_AMOUNT = 50;
     private static final int ENERGY_TRANSFER_AMOUNT = 320;
+
+    // Lithium (mB) handling
+    private int lithiumMb = 0;
+    private static final int MAX_LITHIUM_MB = 10000;
+    private static final int LITHIUM_PER_INGOT = 120;
+    private static final int LITHIUM_REQUIRED_PER_CRAFT = 300;
 
     public final SimpleEnergyStorage energyStorage = new SimpleEnergyStorage(64000, ENERGY_TRANSFER_AMOUNT, ENERGY_TRANSFER_AMOUNT) {
         @Override
@@ -66,6 +73,7 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
                 return switch (index) {
                     case 0 -> RecyclerBlockEntity.this.progress;
                     case 1 -> RecyclerBlockEntity.this.maxProgress;
+                    case 2 -> RecyclerBlockEntity.this.lithiumMb;
                     default -> 0;
                 };
             }
@@ -73,14 +81,15 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
             @Override
             public void set(int index, int value) {
                 switch (index) {
-                    case 0: RecyclerBlockEntity.this.progress = value;
-                    case 1: RecyclerBlockEntity.this.maxProgress = value;
+                    case 0: RecyclerBlockEntity.this.progress = value; break;
+                    case 1: RecyclerBlockEntity.this.maxProgress = value; break;
+                    case 2: RecyclerBlockEntity.this.lithiumMb = value; break;
                 }
             }
 
             @Override
             public int size() {
-                return 2;
+                return 3;
             }
         };
     }
@@ -99,23 +108,36 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
         }
 
         if (side == Direction.UP) {
-            return slot == INPUT_SLOT;
+            return slot == INPUT_SLOT || slot == BATTERY_MATERIAL_SLOT;
         }
 
-        return switch (localDir) {
+        // For automation on sides, only allow insertion into input slot or battery material slot
+        boolean baseCanInsert = switch (localDir) {
             case EAST ->
-                    side.rotateYClockwise() == Direction.NORTH && slot == INPUT_SLOT ||
-                            side.rotateYClockwise() == Direction.WEST && slot == INPUT_SLOT;
+                    side.rotateYClockwise() == Direction.NORTH && (slot == INPUT_SLOT || slot == BATTERY_MATERIAL_SLOT) ||
+                            side.rotateYClockwise() == Direction.WEST && (slot == INPUT_SLOT || slot == BATTERY_MATERIAL_SLOT);
             case SOUTH ->
-                    side == Direction.NORTH && slot == INPUT_SLOT ||
-                            side == Direction.WEST && slot == INPUT_SLOT;
+                    side == Direction.NORTH && (slot == INPUT_SLOT || slot == BATTERY_MATERIAL_SLOT) ||
+                            side == Direction.WEST && (slot == INPUT_SLOT || slot == BATTERY_MATERIAL_SLOT);
             case WEST ->
-                    side.rotateYCounterclockwise() == Direction.NORTH && slot == INPUT_SLOT ||
-                            side.rotateYCounterclockwise() == Direction.WEST && slot == INPUT_SLOT;
+                    side.rotateYCounterclockwise() == Direction.NORTH && (slot == INPUT_SLOT || slot == BATTERY_MATERIAL_SLOT) ||
+                            side.rotateYCounterclockwise() == Direction.WEST && (slot == INPUT_SLOT || slot == BATTERY_MATERIAL_SLOT);
             default -> // North
-                    side.getOpposite() == Direction.NORTH && slot == INPUT_SLOT ||
-                            side.getOpposite() == Direction.WEST && slot == INPUT_SLOT;
+                    side.getOpposite() == Direction.NORTH && (slot == INPUT_SLOT || slot == BATTERY_MATERIAL_SLOT) ||
+                            side.getOpposite() == Direction.WEST && (slot == INPUT_SLOT || slot == BATTERY_MATERIAL_SLOT);
         };
+
+        if (!baseCanInsert) return false;
+
+        // Enforce item types for specific slots
+        if (slot == BATTERY_MATERIAL_SLOT) {
+            // Only allow lithium ingots to be inserted here
+            // Use item comparison to ModItems.LITHIUM_INGOT (avoid direct import issues by referencing)
+            return stack.isOf(net.acidicts.poweredtools.item.ModItems.LITHIUM_INGOT);
+        }
+
+        // Keep existing behavior for other slots
+        return slot == INPUT_SLOT;
     }
 
     @Override
@@ -174,6 +196,7 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
         nbt.putInt("recycler.progress", progress);
         nbt.putInt("recycler.max_progress", maxProgress);
         nbt.putLong("recycler.energy", energyStorage.amount);
+        nbt.putInt("recycler.lithium_mb", lithiumMb);
     }
 
     @Override
@@ -182,10 +205,23 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
         progress = nbt.getInt("recycler.progress");
         maxProgress = nbt.getInt("recycler.max_progress");
         energyStorage.amount = nbt.getLong("recycler.energy");
+        lithiumMb = nbt.contains("recycler.lithium_mb") ? nbt.getInt("recycler.lithium_mb") : 0;
         super.readNbt(nbt, registryLookup);
     }
 
     public void tick(World world, BlockPos pos, BlockState state) {
+        // Convert lithium ingots in the BATTERY_MATERIAL_SLOT into internal mB storage if there is space
+        ItemStack matStack = this.getStack(BATTERY_MATERIAL_SLOT);
+        if (!matStack.isEmpty() && matStack.isOf(net.acidicts.poweredtools.item.ModItems.LITHIUM_INGOT) && this.lithiumMb < MAX_LITHIUM_MB) {
+            int spaceForIngot = (MAX_LITHIUM_MB - this.lithiumMb) / LITHIUM_PER_INGOT; // how many full ingots fit
+            if (spaceForIngot > 0) {
+                int toConsume = Math.min(spaceForIngot, matStack.getCount());
+                // remove ingots
+                this.removeStack(BATTERY_MATERIAL_SLOT, toConsume);
+                this.lithiumMb += toConsume * LITHIUM_PER_INGOT;
+            }
+        }
+
         if (hasRecipe() && canInsertIntoOutputSlot()) {
             increaseCraftingProgress();
             world.setBlockState(pos, state.with(Recycler.LIT, true));
@@ -209,18 +245,24 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
     private void craftItem() {
         Optional<RecipeEntry<RecyclerRecipe>> recipe = getCurrentRecipe();
 
-        this.removeStack(INPUT_SLOT, 1);
-        this.setStack(OUTPUT_SLOT, new ItemStack(recipe.get().value().output().getItem(),
-                this.getStack(OUTPUT_SLOT).getCount() + recipe.get().value().getResult(null).getCount()));
+        if (recipe.isPresent()) {
+            this.removeStack(INPUT_SLOT, 1);
+            this.setStack(OUTPUT_SLOT, new ItemStack(recipe.get().value().output().getItem(),
+                    this.getStack(OUTPUT_SLOT).getCount() + recipe.get().value().getResult(null).getCount()));
+
+            // consume lithium for crafting
+            if (this.lithiumMb >= LITHIUM_REQUIRED_PER_CRAFT) {
+                this.lithiumMb -= LITHIUM_REQUIRED_PER_CRAFT;
+            }
+        }
     }
 
     private boolean hasCraftingFinished() {
-        Optional<RecipeEntry<RecyclerRecipe>> recipe = getCurrentRecipe();
         return this.progress >= this.maxProgress;
     }
 
     private void increaseCraftingProgress() {
-        if (!hasEnoughEnergy(ENERGY_CRAFTING_AMOUNT)) {
+        if (hasEnoughEnergy(ENERGY_CRAFTING_AMOUNT)) {
             this.progress++;
             try (Transaction transaction = Transaction.openOuter()) {
                 this.energyStorage.extract(ENERGY_CRAFTING_AMOUNT, transaction);
@@ -245,11 +287,13 @@ public class RecyclerBlockEntity extends BlockEntity implements ExtendedScreenHa
 
         this.maxProgress = recipe.get().value().getCookingTime();
 
-        return canInsertAmountIntoOutputSlot(output.getCount()) && canInsertItemIntoOutputSlot(output);
+        // require lithium to be available for crafting
+        return canInsertAmountIntoOutputSlot(output.getCount()) && canInsertItemIntoOutputSlot(output) && this.lithiumMb >= LITHIUM_REQUIRED_PER_CRAFT;
     }
 
     private boolean hasEnoughEnergy(int amount) {
-        return amount >= this.energyStorage.amount;
+        // fixed comparison: check if we have at least `amount` energy
+        return this.energyStorage.amount >= amount;
     }
 
     private Optional<RecipeEntry<RecyclerRecipe>> getCurrentRecipe() {
