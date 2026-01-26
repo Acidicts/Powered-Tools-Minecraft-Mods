@@ -15,7 +15,7 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
-public record AlloySmelterRecipe(Ingredient input1, Ingredient input2, Ingredient input3, ItemStack output, int cookingTime) implements Recipe<AlloySmelterRecipeInput> {
+public record AlloySmelterRecipe(Ingredient input1, Ingredient input2, Ingredient input3, ItemStack output, int cookingTime, int requiredInputs) implements Recipe<AlloySmelterRecipeInput> {
     @Override
     public DefaultedList<Ingredient> getIngredients() {
         DefaultedList<Ingredient> list = DefaultedList.of();
@@ -33,6 +33,10 @@ public record AlloySmelterRecipe(Ingredient input1, Ingredient input2, Ingredien
 
     public int getCookingTime() {
         return cookingTime;
+    }
+
+    public int getRequiredInputs() {
+        return requiredInputs;
     }
 
     @Override
@@ -61,8 +65,11 @@ public record AlloySmelterRecipe(Ingredient input1, Ingredient input2, Ingredien
             }
         }
 
-        // All three ingredients must be matched
-        return ingredientMatched[0] && ingredientMatched[1] && ingredientMatched[2];
+        // Count matched ingredients and ensure we have at least the required number
+        int matchedCount = 0;
+        for (boolean m : ingredientMatched) if (m) matchedCount++;
+
+        return matchedCount >= this.requiredInputs;
     }
 
     @Override
@@ -97,7 +104,8 @@ public record AlloySmelterRecipe(Ingredient input1, Ingredient input2, Ingredien
                 Ingredient.DISALLOW_EMPTY_CODEC.fieldOf("input2").forGetter(AlloySmelterRecipe::input2),
                 Ingredient.DISALLOW_EMPTY_CODEC.fieldOf("input3").forGetter(AlloySmelterRecipe::input3),
                 ItemStack.CODEC.fieldOf("output").forGetter(AlloySmelterRecipe::output),
-                com.mojang.serialization.Codec.INT.fieldOf("cookingtime").forGetter(AlloySmelterRecipe::cookingTime)
+                com.mojang.serialization.Codec.INT.fieldOf("cookingtime").forGetter(AlloySmelterRecipe::cookingTime),
+                com.mojang.serialization.Codec.INT.fieldOf("requiredInputs").forGetter(AlloySmelterRecipe::requiredInputs)
         ).apply(inst, AlloySmelterRecipe::new));
 
         public static final PacketCodec<RegistryByteBuf, AlloySmelterRecipe> STREAM_CODEC =
@@ -107,6 +115,7 @@ public record AlloySmelterRecipe(Ingredient input1, Ingredient input2, Ingredien
                         Ingredient.PACKET_CODEC, AlloySmelterRecipe::input3,
                         ItemStack.PACKET_CODEC, AlloySmelterRecipe::output,
                         PacketCodec.ofStatic((buf, value) -> buf.writeInt(value), buf -> buf.readInt()), AlloySmelterRecipe::cookingTime,
+                        PacketCodec.ofStatic((buf, value) -> buf.writeInt(value), buf -> buf.readInt()), AlloySmelterRecipe::requiredInputs,
                         AlloySmelterRecipe::new
                 );
 
@@ -121,4 +130,3 @@ public record AlloySmelterRecipe(Ingredient input1, Ingredient input2, Ingredien
         }
     }
 }
-

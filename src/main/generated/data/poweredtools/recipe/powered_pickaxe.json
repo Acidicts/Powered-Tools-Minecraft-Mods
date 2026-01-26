@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "poweredtools:powered_ingot"
+    },
+    "R": {
+      "item": "poweredtools:tool_rod"
+    }
+  },
+  "pattern": [
+    "III",
+    " R ",
+    " R "
+  ],
+  "result": {
+    "count": 1,
+    "id": "poweredtools:powered_pickaxe"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "poweredtools:alloying",
+  "cookingtime": 48,
+  "input1": {
+    "item": "poweredtools:lithium_dust"
+  },
+  "input2": {
+    "item": "poweredtools:lithium_dust"
+  },
+  "input3": {
+    "item": "poweredtools:lithium_dust"
+  },
+  "output": {
+    "count": 1,
+    "id": "poweredtools:impure_lithium"
+  },
+  "requiredInputs": 1
+}

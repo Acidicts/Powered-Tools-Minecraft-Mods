@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "R": {
+      "item": "minecraft:coal"
+    },
+    "S": {
+      "item": "poweredtools:steel_ingot"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "CRC",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "poweredtools:coal_generator"
+  }
+}

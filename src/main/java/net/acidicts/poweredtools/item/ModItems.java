@@ -47,6 +47,20 @@ public class ModItems {
             new BrokenBatteryItem(ModBatteryMaterials.Diamond_Gold, new Item.Settings()));
 
 
+    public static final Item UNCANNED_BATTERY_TIER_0 = registerItem("uncanned_battery_0",
+            new Item(new Item.Settings()));
+    public static final Item UNCANNED_BATTERY_TIER_1 = registerItem("uncanned_battery_1",
+            new Item(new Item.Settings()));
+    public static final Item UNCANNED_BATTERY_TIER_2 = registerItem("uncanned_battery_2",
+            new Item(new Item.Settings()));
+    public static final Item UNCANNED_BATTERY_TIER_3 = registerItem("uncanned_battery_3",
+            new Item(new Item.Settings()));
+    public static final Item UNCANNED_BATTERY_TIER_4 = registerItem("uncanned_battery_4",
+            new Item(new Item.Settings()));
+    public static final Item UNCANNED_BATTERY_TIER_5 = registerItem("uncanned_battery_5",
+            new Item(new Item.Settings()));
+
+
     public static final Item FIRE_SHIELD_CORE = registerItem("fire_shield_core",
             new FireShieldCore(new Item.Settings()));
     public static final Item WATER_SHIELD_CORE = registerItem("water_shield_core",
@@ -55,6 +69,12 @@ public class ModItems {
             new DamageShieldCore(new Item.Settings()));
 
     // Ingredients
+
+    public static final Item POWERED_INGOT = registerItem("powered_ingot",
+            new Item(new Item.Settings()));
+
+    public static final Item TOOL_ROD = registerItem("tool_rod",
+            new Item(new Item.Settings()));
 
     public static final Item LITHIUM_DUST = registerItem("lithium_dust",
             new Item(new Item.Settings()));

@@ -1,0 +1,18 @@
+{
+  "type": "poweredtools:alloying",
+  "cookingtime": 48,
+  "input1": {
+    "item": "poweredtools:steel_dust"
+  },
+  "input2": {
+    "item": "poweredtools:steel_dust"
+  },
+  "input3": {
+    "item": "poweredtools:steel_dust"
+  },
+  "output": {
+    "count": 1,
+    "id": "poweredtools:steel_ingot"
+  },
+  "requiredInputs": 1
+}

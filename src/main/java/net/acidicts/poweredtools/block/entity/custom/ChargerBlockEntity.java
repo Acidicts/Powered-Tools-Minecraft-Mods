@@ -61,8 +61,8 @@ public class ChargerBlockEntity extends BlockEntity implements GeoBlockEntity, E
                 return switch (index) {
                     case 0 -> ChargerBlockEntity.this.progress;
                     case 1 -> ChargerBlockEntity.this.maxProgress;
-                    case 2 -> (int) (ChargerBlockEntity.this.energyStorage.amount & 0xFFFF);
-                    case 3 -> (int) ((ChargerBlockEntity.this.energyStorage.amount >> 16) & 0xFFFF);
+                    case 2 -> (int) (ChargerBlockEntity.this.energyStorage.amount & 0xFFFFL);
+                    case 3 -> (int) ((ChargerBlockEntity.this.energyStorage.amount >> 16) & 0xFFFFL);
                     default -> 0;
                 };
             }
@@ -73,12 +73,14 @@ public class ChargerBlockEntity extends BlockEntity implements GeoBlockEntity, E
                     case 0 -> ChargerBlockEntity.this.progress = value;
                     case 1 -> ChargerBlockEntity.this.maxProgress = value;
                     case 2 -> {
-                        int current = (int) ChargerBlockEntity.this.energyStorage.amount;
-                        ChargerBlockEntity.this.energyStorage.amount = (current & 0xFFFF0000) | (value & 0xFFFF);
+                        long current = ChargerBlockEntity.this.energyStorage.amount;
+                        // Clear the lower 16 bits and set them to value
+                        ChargerBlockEntity.this.energyStorage.amount = (current & ~0xFFFFL) | (value & 0xFFFFL);
                     }
                     case 3 -> {
-                        int current = (int) ChargerBlockEntity.this.energyStorage.amount;
-                        ChargerBlockEntity.this.energyStorage.amount = (current & 0x0000FFFF) | ((value & 0xFFFF) << 16);
+                        long current = ChargerBlockEntity.this.energyStorage.amount;
+                        // Clear bits 16-31 and set them from value
+                        ChargerBlockEntity.this.energyStorage.amount = (current & 0xFFFFL) | ((value & 0xFFFFL) << 16);
                     }
                 }
             }

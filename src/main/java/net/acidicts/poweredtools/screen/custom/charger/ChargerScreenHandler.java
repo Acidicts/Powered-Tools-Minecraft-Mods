@@ -88,8 +88,10 @@ public class ChargerScreenHandler extends ScreenHandler {
     }
 
     public int getEnergy() {
-        int lower = this.propertyDelegate.get(2);
-        int upper = this.propertyDelegate.get(3);
-        return (upper << 16) | (lower & 0xFFFF);
+        int lower = this.propertyDelegate.get(2) & 0xFFFF;
+        int upper = this.propertyDelegate.get(3) & 0xFFFF;
+        long combined = ((long)upper << 16) | (long)lower;
+        // clamp to int range because screens expect int values; energy storage max is 64000 so safe
+        return (int)combined;
     }
 }

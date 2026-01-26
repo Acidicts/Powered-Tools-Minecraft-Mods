@@ -1,0 +1,11 @@
+{
+  "type": "poweredtools:recycling",
+  "cookingtime": 48,
+  "ingredient": {
+    "item": "poweredtools:uncanned_battery_1"
+  },
+  "output": {
+    "count": 1,
+    "id": "poweredtools:battery_1"
+  }
+}

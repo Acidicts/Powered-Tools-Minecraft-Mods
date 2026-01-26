@@ -29,6 +29,15 @@ public class ModModelProvider extends FabricModelProvider {
             (BrokenBatteryItem) ModItems.BROKEN_BATTERY_TIER_4,
             (BrokenBatteryItem) ModItems.BROKEN_BATTERY_TIER_5
     );
+    public final List<Item> uncannedBatteryItems = List.of(
+            ModItems.UNCANNED_BATTERY_TIER_0,
+            ModItems.UNCANNED_BATTERY_TIER_1,
+            ModItems.UNCANNED_BATTERY_TIER_2,
+            ModItems.UNCANNED_BATTERY_TIER_3,
+            ModItems.UNCANNED_BATTERY_TIER_4,
+            ModItems.UNCANNED_BATTERY_TIER_5
+    );
+
     public final List<Item> ingredients = List.of(
             ModItems.IMPURE_LITHIUM_INGOT,
             ModItems.LITHIUM_DUST,
@@ -36,13 +45,18 @@ public class ModModelProvider extends FabricModelProvider {
             ModItems.STEEL_DUST,
             ModItems.STEEL_INGOT,
 
-            ModItems.DIAMOND_GOLD_INGOT
+            ModItems.TOOL_ROD,
+
+            ModItems.DIAMOND_GOLD_INGOT,
+            ModItems.POWERED_INGOT
     );
+
     public final List<Item> modifiers = List.of(
             ModItems.EFFICIENCY_MODIFIER,
             ModItems.FORTUNE_MODIFIER,
             ModItems.SILK_TOUCH_MODIFIER
     );
+
     public final List<Item> shieldCores = List.of(
         ModItems.FIRE_SHIELD_CORE,
         ModItems.WATER_SHIELD_CORE,
@@ -70,6 +84,9 @@ public class ModModelProvider extends FabricModelProvider {
             itemModelGenerator.register(item, Models.GENERATED);
         }
         for (BrokenBatteryItem item : brokenBatteryItems) {
+            itemModelGenerator.register(item, Models.GENERATED);
+        }
+        for (Item item : uncannedBatteryItems) {
             itemModelGenerator.register(item, Models.GENERATED);
         }
         for (Item item : ingredients) {

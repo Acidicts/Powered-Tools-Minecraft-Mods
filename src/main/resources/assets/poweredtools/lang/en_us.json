@@ -1,5 +1,6 @@
 {
   "item.poweredtools.powered_pickaxe": "Powered Pickaxe",
+
   "item.poweredtools.battery_0": "Stone Battery",
   "item.poweredtools.battery_1": "Iron Battery",
   "item.poweredtools.battery_2": "Gold Battery",
@@ -13,6 +14,16 @@
   "item.poweredtools.broken_battery_3": "Broken Diamond Battery",
   "item.poweredtools.broken_battery_4": "Broken Netherite Battery",
   "item.poweredtools.broken_battery_5": "Broken Diamond-Gold Battery",
+
+  "item.poweredtools.uncanned_battery_0": "Uncanned Stone Battery",
+  "item.poweredtools.uncanned_battery_1": "Uncanned Iron Battery",
+  "item.poweredtools.uncanned_battery_2": "Uncanned Gold Battery",
+  "item.poweredtools.uncanned_battery_3": "Uncanned Diamond Battery",
+  "item.poweredtools.uncanned_battery_4": "Uncanned Netherite Battery",
+  "item.poweredtools.uncanned_battery_5": "Uncanned Diamond-Gold Battery",
+
+  "item.poweredtools.powered_ingot": "Powered Ingot",
+  "item.poweredtools.tool_row": "Tool Rod",
 
   "item.poweredtools.diamond_gold_ingot": "Diamond-Gold Ingot",
   "item.poweredtools.steel_dust": "Steel Dust",
@@ -43,5 +54,6 @@
   "gui.poweredtools.charger": "Charger",
   "gui.poweredtools.coal_generator": "Coal Generator",
 
-  "rei.poweredtools.recycler": "Recycler"
+  "rei.poweredtools.recycler": "Recycler",
+  "rei.poweredtools.alloy_smelter": "Alloy Smelter"
 }

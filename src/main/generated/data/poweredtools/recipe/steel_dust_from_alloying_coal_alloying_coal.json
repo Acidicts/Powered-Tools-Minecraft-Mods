@@ -1,0 +1,18 @@
+{
+  "type": "poweredtools:alloying",
+  "cookingtime": 48,
+  "input1": {
+    "item": "minecraft:iron_ingot"
+  },
+  "input2": {
+    "item": "minecraft:coal"
+  },
+  "input3": {
+    "item": "minecraft:iron_ingot"
+  },
+  "output": {
+    "count": 1,
+    "id": "poweredtools:steel_dust"
+  },
+  "requiredInputs": 2
+}

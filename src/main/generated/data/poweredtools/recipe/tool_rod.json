@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "  R",
+    " O ",
+    "R  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "poweredtools:tool_rod"
+  }
+}
