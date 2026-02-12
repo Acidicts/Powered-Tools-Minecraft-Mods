@@ -6,7 +6,7 @@
       "item": "minecraft:copper_ingot"
     },
     "S": {
-      "item": "poweredtools:steel_ingot"
+      "item": "minecraft:iron_ingot"
     }
   },
   "pattern": [

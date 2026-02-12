@@ -475,7 +475,7 @@
 		},
 		"ground": {
 			"translation": [0, 3, 0],
-			"scale": [0.5, 0.5, 0.5]
+			"scale": [0.25, 0.25, 0.25]
 		},
 		"gui": {
 			"rotation": [20, 162, 0],
@@ -488,7 +488,7 @@
 			"translation": [0, 0, 3]
 		},
 		"on_shelf": {
-			"rotation": [0, 180, 0]
+			"rotation": [0, -180, 0]
 		}
 	},
 	"groups": [
