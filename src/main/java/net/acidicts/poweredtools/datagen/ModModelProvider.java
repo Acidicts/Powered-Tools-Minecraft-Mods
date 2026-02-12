@@ -54,7 +54,11 @@ public class ModModelProvider extends FabricModelProvider {
     public final List<Item> modifiers = List.of(
             ModItems.EFFICIENCY_MODIFIER,
             ModItems.FORTUNE_MODIFIER,
-            ModItems.SILK_TOUCH_MODIFIER
+            ModItems.SILK_TOUCH_MODIFIER,
+            ModItems.SHARPNESS_MODIFIER,
+            ModItems.FIRE_ASPECT_MODIFIER,
+            ModItems.BANE_OF_ARTHROPODS_MODIFIER,
+            ModItems.SWEEPING_EDGE_MODIFIER
     );
 
     public final List<Item> shieldCores = List.of(
@@ -79,6 +83,7 @@ public class ModModelProvider extends FabricModelProvider {
 
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
+        itemModelGenerator.register(ModItems.POWERED_SWORD_1, Models.GENERATED);
 
         for (BatteryItem item : batteryItems) {
             itemModelGenerator.register(item, Models.GENERATED);

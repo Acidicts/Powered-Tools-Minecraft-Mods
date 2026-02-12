@@ -11,6 +11,7 @@ public class ModTags {
     public static class Items {
         public static final TagKey<Item> chargeable = createTagKey("chargeable");
         public static final TagKey<Item> ModifierItems = createTagKey("modifiers");
+        public static final TagKey<Item> SwordModifierItems = createTagKey("sword_modifiers");
 
         private static TagKey<Item> createTagKey(String name) {
             return TagKey.of(RegistryKeys.ITEM, Identifier.of(PoweredTools.MOD_ID, name));

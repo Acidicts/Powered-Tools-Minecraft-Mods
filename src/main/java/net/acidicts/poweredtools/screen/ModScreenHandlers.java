@@ -5,6 +5,7 @@ import net.acidicts.poweredtools.screen.custom.alloy_smelter.AlloySmelterScreenH
 import net.acidicts.poweredtools.screen.custom.charger.ChargerScreenHandler;
 import net.acidicts.poweredtools.screen.custom.coal_generator.CoalGeneratorScreenHandler;
 import net.acidicts.poweredtools.screen.custom.power_pickaxe.PoweredPickaxeScreenHandler;
+import net.acidicts.poweredtools.screen.custom.powered_sword.PoweredSwordScreenHandler;
 import net.acidicts.poweredtools.screen.custom.recycler.RecyclerScreenHandler;
 import net.acidicts.poweredtools.screen.custom.shieldcore.ShieldCoreScreenHandler;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
@@ -35,6 +36,10 @@ public class ModScreenHandlers {
     public static final ScreenHandlerType<PoweredPickaxeScreenHandler> POWERED_PICKAXE_SCREEN_HANDLER =
             Registry.register(Registries.SCREEN_HANDLER, Identifier.of(PoweredTools.MOD_ID, "powered_pickaxe_screen_handler"),
                     new ExtendedScreenHandlerType<>(PoweredPickaxeScreenHandler::new, ItemStack.PACKET_CODEC));
+
+    public static final ScreenHandlerType<PoweredSwordScreenHandler> POWERED_SWORD_SCREEN_HANDLER =
+            Registry.register(Registries.SCREEN_HANDLER, Identifier.of(PoweredTools.MOD_ID, "powered_sword_screen_handler"),
+                    new ExtendedScreenHandlerType<>(PoweredSwordScreenHandler::new, ItemStack.PACKET_CODEC));
 
     public static final ScreenHandlerType<ShieldCoreScreenHandler> SHIELD_CORE_SCREEN_HANDLER =
             Registry.register(Registries.SCREEN_HANDLER, Identifier.of(PoweredTools.MOD_ID, "shield_core_screen_handler"),

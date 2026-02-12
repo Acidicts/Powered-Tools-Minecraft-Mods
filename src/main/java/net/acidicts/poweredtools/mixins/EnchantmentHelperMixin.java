@@ -1,5 +1,6 @@
 package net.acidicts.poweredtools.mixins;
 
+import net.acidicts.poweredtools.item.custom.PoweredSword;
 import net.acidicts.poweredtools.item.custom.Powered_Pickaxe;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -31,6 +32,26 @@ public class EnchantmentHelperMixin {
                  if (enchantKey != null && enchantment.matchesKey(enchantKey)) {
                      cir.setReturnValue(Math.max(level, genericNum));
                  }
+            }
+        } else if (stack.getItem() instanceof PoweredSword sword) {
+            int level = cir.getReturnValue();
+            if (enchantment.matchesKey(Enchantments.SHARPNESS)) {
+                cir.setReturnValue(level + sword.getSharpnessModifier(stack));
+            }
+
+            int genericLevel = level;
+            for (int slot = 0; slot < 2; slot++) {
+                String genericType = sword.getSwordGenericModifierType(stack, slot);
+                int genericNum = sword.getSwordGenericModifierNum(stack, slot);
+                if (genericType != null && !genericType.isEmpty() && genericNum > 0) {
+                    RegistryKey<Enchantment> enchantKey = sword.getEnchantmentFromGenericType(genericType);
+                    if (enchantKey != null && enchantment.matchesKey(enchantKey)) {
+                        genericLevel = Math.max(genericLevel, genericNum);
+                    }
+                }
+            }
+            if (genericLevel != level) {
+                cir.setReturnValue(genericLevel);
             }
         }
     }

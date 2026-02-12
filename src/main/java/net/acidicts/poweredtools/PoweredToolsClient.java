@@ -8,6 +8,7 @@ import net.acidicts.poweredtools.screen.custom.alloy_smelter.AlloySmelterScreen;
 import net.acidicts.poweredtools.screen.custom.charger.ChargerScreen;
 import net.acidicts.poweredtools.screen.custom.coal_generator.CoalGeneratorScreen;
 import net.acidicts.poweredtools.screen.custom.power_pickaxe.PoweredPickaxeScreen;
+import net.acidicts.poweredtools.screen.custom.powered_sword.PoweredSwordScreen;
 import net.acidicts.poweredtools.screen.custom.recycler.RecyclerScreen;
 import net.acidicts.poweredtools.screen.custom.shieldcore.ShieldCoreScreen;
 import net.fabricmc.api.ClientModInitializer;
@@ -27,6 +28,7 @@ public class PoweredToolsClient implements ClientModInitializer {
         HandledScreens.register(ModScreenHandlers.CHARGER_SCREEN_HANDLER, ChargerScreen::new);
 
         HandledScreens.register(ModScreenHandlers.POWERED_PICKAXE_SCREEN_HANDLER, PoweredPickaxeScreen::new);
+        HandledScreens.register(ModScreenHandlers.POWERED_SWORD_SCREEN_HANDLER, PoweredSwordScreen::new);
 
 
         HandledScreens.register(ModScreenHandlers.SHIELD_CORE_SCREEN_HANDLER, ShieldCoreScreen::new);

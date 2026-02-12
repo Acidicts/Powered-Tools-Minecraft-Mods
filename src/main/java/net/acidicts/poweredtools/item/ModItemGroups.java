@@ -18,6 +18,7 @@ public class ModItemGroups {
                     .icon(() -> new ItemStack(ModItems.POWERED_PICKAXE_1))
                     .entries(((displayContext, entries) -> {
                         entries.add(ModItems.POWERED_PICKAXE_1);
+                        entries.add(ModItems.POWERED_SWORD_1);
 
                         entries.add(ModBlocks.CHARGER);
                         entries.add(ModBlocks.RECYCLER);
@@ -58,6 +59,10 @@ public class ModItemGroups {
                         entries.add(ModItems.EFFICIENCY_MODIFIER);
                         entries.add(ModItems.FORTUNE_MODIFIER);
                         entries.add(ModItems.SILK_TOUCH_MODIFIER);
+                        entries.add(ModItems.SHARPNESS_MODIFIER);
+                        entries.add(ModItems.FIRE_ASPECT_MODIFIER);
+                        entries.add(ModItems.BANE_OF_ARTHROPODS_MODIFIER);
+                        entries.add(ModItems.SWEEPING_EDGE_MODIFIER);
 
                         entries.add(ModItems.FIRE_SHIELD_CORE);
                         entries.add(ModItems.WATER_SHIELD_CORE);

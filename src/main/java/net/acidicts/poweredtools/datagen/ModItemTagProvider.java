@@ -27,5 +27,10 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
                 .add(ModItems.SILK_TOUCH_MODIFIER)
                 .add(ModItems.EFFICIENCY_MODIFIER)
                 .add(ModItems.FORTUNE_MODIFIER);
+
+        getOrCreateTagBuilder(ModTags.Items.SwordModifierItems)
+                .add(ModItems.FIRE_ASPECT_MODIFIER)
+                .add(ModItems.BANE_OF_ARTHROPODS_MODIFIER)
+                .add(ModItems.SWEEPING_EDGE_MODIFIER);
     }
 }

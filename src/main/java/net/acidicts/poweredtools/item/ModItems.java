@@ -2,10 +2,7 @@ package net.acidicts.poweredtools.item;
 
 
 import net.acidicts.poweredtools.PoweredTools;
-import net.acidicts.poweredtools.item.custom.BatteryItem;
-import net.acidicts.poweredtools.item.custom.BrokenBatteryItem;
-import net.acidicts.poweredtools.item.custom.ModBatteryMaterials;
-import net.acidicts.poweredtools.item.custom.Powered_Pickaxe;
+import net.acidicts.poweredtools.item.custom.*;
 import net.acidicts.poweredtools.item.custom.shieldcores.DamageShieldCore;
 import net.acidicts.poweredtools.item.custom.shieldcores.FireShieldCore;
 import net.acidicts.poweredtools.item.custom.shieldcores.WaterShieldCore;
@@ -18,6 +15,9 @@ import net.minecraft.util.Identifier;
 public class ModItems {
     public static final Item POWERED_PICKAXE_1 = registerItem("powered_pickaxe",
             new Powered_Pickaxe(ModToolMaterials.PoweredTool_T1, new Item.Settings()));
+
+    public static final Item POWERED_SWORD_1 = registerItem("powered_sword",
+            new PoweredSword(ModToolMaterials.PoweredTool_T1, new Item.Settings()));
 
     public static final Item BATTERY_TIER_0 = registerItem("battery_0",
             new BatteryItem(ModBatteryMaterials.Stone, new Item.Settings()));
@@ -107,6 +107,18 @@ public class ModItems {
 
     public static final Item SILK_TOUCH_MODIFIER = registerItem("silk_touch_modifier",
             new Item(new Item.Settings().maxCount(1)));
+
+    public static final Item SHARPNESS_MODIFIER = registerItem("sharpness_modifier",
+            new Item(new Item.Settings().maxCount(5)));
+
+    public static final Item FIRE_ASPECT_MODIFIER = registerItem("fire_aspect_modifier",
+            new Item(new Item.Settings().maxCount(2)));
+
+    public static final Item BANE_OF_ARTHROPODS_MODIFIER = registerItem("bane_of_arthropods_modifier",
+            new Item(new Item.Settings().maxCount(5)));
+
+    public static final Item SWEEPING_EDGE_MODIFIER = registerItem("sweeping_edge_modifier",
+            new Item(new Item.Settings().maxCount(3)));
 
 
     private static Item registerItem(String name, Item item) {
