@@ -151,7 +151,7 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                 .pattern("SSS")
                 .pattern("CCC")
                 .pattern("SSS")
-                .input('S', ModItems.STEEL_INGOT)
+                .input('S', Items.IRON_INGOT)
                 .input('C', Items.COPPER_INGOT)
                 .criterion(hasItem(Items.DIAMOND), conditionsFromItem(Items.DIAMOND))
                 .criterion(hasItem(ModItems.STEEL_DUST), conditionsFromItem(ModItems.STEEL_DUST))
