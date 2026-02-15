@@ -3,6 +3,7 @@ package net.acidicts.poweredtools.screen.custom.charger;
 import net.acidicts.poweredtools.block.entity.custom.ChargerBlockEntity;
 import net.acidicts.poweredtools.item.custom.BatteryItem;
 import net.acidicts.poweredtools.screen.ModScreenHandlers;
+import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -13,6 +14,7 @@ import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.math.BlockPos;
+import team.reborn.energy.api.EnergyStorage;
 
 public class ChargerScreenHandler extends ScreenHandler {
     private final Inventory inventory;
@@ -91,7 +93,43 @@ public class ChargerScreenHandler extends ScreenHandler {
         int lower = this.propertyDelegate.get(2) & 0xFFFF;
         int upper = this.propertyDelegate.get(3) & 0xFFFF;
         long combined = ((long)upper << 16) | (long)lower;
+        // Debug logging
+        System.out.println("ChargerScreenHandler.getEnergy() - lower: " + lower + ", upper: " + upper + ", combined: " + combined);
         // clamp to int range because screens expect int values; energy storage max is 64000 so safe
         return (int)combined;
+    }
+
+    public EnergyStorage getEnergyStorage() {
+        return new EnergyStorage() {
+            @Override
+            public long getAmount() {
+                return getEnergy();
+            }
+
+            @Override
+            public long getCapacity() {
+                return 64000;
+            }
+
+            @Override
+            public boolean supportsInsertion() {
+                return false;
+            }
+
+            @Override
+            public long insert(long maxAmount, TransactionContext transaction) {
+                return 0;
+            }
+
+            @Override
+            public boolean supportsExtraction() {
+                return false;
+            }
+
+            @Override
+            public long extract(long maxAmount, TransactionContext transaction) {
+                return 0;
+            }
+        };
     }
 }

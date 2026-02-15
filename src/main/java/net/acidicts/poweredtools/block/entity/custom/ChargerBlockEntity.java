@@ -58,13 +58,17 @@ public class ChargerBlockEntity extends BlockEntity implements GeoBlockEntity, E
         this.propertyDelegate = new PropertyDelegate() {
             @Override
             public int get(int index) {
-                return switch (index) {
+                int value = switch (index) {
                     case 0 -> ChargerBlockEntity.this.progress;
                     case 1 -> ChargerBlockEntity.this.maxProgress;
                     case 2 -> (int) (ChargerBlockEntity.this.energyStorage.amount & 0xFFFFL);
                     case 3 -> (int) ((ChargerBlockEntity.this.energyStorage.amount >> 16) & 0xFFFFL);
                     default -> 0;
                 };
+                if (index == 2 || index == 3) {
+                    System.out.println("PropertyDelegate.get(" + index + ") = " + value + " (energy.amount=" + ChargerBlockEntity.this.energyStorage.amount + ")");
+                }
+                return value;
             }
 
             @Override
@@ -258,6 +262,7 @@ public class ChargerBlockEntity extends BlockEntity implements GeoBlockEntity, E
         Inventories.writeNbt(nbt, inventory, registryLookup);
         nbt.putBoolean("HasOpened", hasOpened);
         nbt.putInt("Charger.progress", progress);
+        nbt.putLong("Charger.energy", energyStorage.amount);
     }
 
     @Override
@@ -266,6 +271,7 @@ public class ChargerBlockEntity extends BlockEntity implements GeoBlockEntity, E
         Inventories.readNbt(nbt, inventory, registryLookup);
         hasOpened = nbt.getBoolean("HasOpened");
         progress = nbt.getInt("Charger.progress");
+        energyStorage.amount = nbt.getLong("Charger.energy");
         // If it was previously opened, mark animation as already set to prevent restart
         if (hasOpened) {
             animationSet = true;
@@ -277,6 +283,7 @@ public class ChargerBlockEntity extends BlockEntity implements GeoBlockEntity, E
         // This method is called to sync data to the client when the chunk loads
         NbtCompound nbt = super.toInitialChunkDataNbt(registryLookup);
         nbt.putBoolean("HasOpened", hasOpened);
+        nbt.putLong("Charger.energy", energyStorage.amount);
         return nbt;
     }
 

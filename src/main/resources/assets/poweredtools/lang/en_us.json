@@ -37,6 +37,10 @@
   "item.poweredtools.fortune_modifier": "Fortune Modifier",
   "item.poweredtools.silk_touch_modifier": "Silk Touch Modifier",
 
+  "item.poweredtools.sharpness_modifier": "Sharpness Modifier",
+  "item.poweredtools.fire_aspect_modifier": "Fire Aspect Modifier",
+  "item.poweredtools.sweeping_edge_modifier": "Sweeping Edge Modifier",
+
   "item.poweredtools.fire_shield_core": "Fire Shield Core",
   "item.poweredtools.water_shield_core": "Water Shield Core",
   "item.poweredtools.damage_shield_core": "Damage Shield Core",

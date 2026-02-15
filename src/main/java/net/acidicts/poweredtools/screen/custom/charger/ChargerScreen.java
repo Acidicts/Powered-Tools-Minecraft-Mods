@@ -11,7 +11,6 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 import java.util.Optional;
 
@@ -35,12 +34,7 @@ public class ChargerScreen extends HandledScreen<ChargerScreenHandler> {
 
     private void assignEnergyInfoArea() {
         energyInfoArea = new EnergyInfoArea(((width - backgroundWidth) / 2) + 156,
-                ((height - backgroundHeight) / 2 ) + 11, new SimpleEnergyStorage(64000, 64000, 64000) {
-            @Override
-            public long getAmount() {
-                return handler.getEnergy();
-            }
-        });
+                ((height - backgroundHeight) / 2 ) + 11, handler.getEnergyStorage());
     }
 
     private void renderEnergyAreaTooltips(DrawContext context, int pMouseX, int pMouseY, int x, int y) {

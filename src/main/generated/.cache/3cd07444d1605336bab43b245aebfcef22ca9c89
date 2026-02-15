@@ -1,4 +1,4 @@
-// 1.21.1	2026-02-12T17:06:38.4444234	PoweredTools/Model Definitions
+// 1.21.1	2026-02-15T18:07:10.3269685	PoweredTools/Model Definitions
 f8c43e085ea1002b802c5f7a9422f400e4ab6f92 assets\poweredtools\models\item\bane_of_arthropods_modifier.json
 bac31af4bd19a4e9b394544c01361730dcdea64c assets\poweredtools\models\item\uncanned_battery_0.json
 7e68601bafe30e219fef2dbf257b1d1812ee4938 assets\poweredtools\models\item\broken_battery_2.json
@@ -11,8 +11,8 @@ e338e6fd1bb5dcf1308fc7127604b28b4979c9b4 assets\poweredtools\models\item\lithium
 f608ee02372018c029d30623e6590bb56960b855 assets\poweredtools\models\item\lithium_ingot.json
 7f28afa87410d436fae8a3a5bed3d9c9b29afff7 assets\poweredtools\models\item\broken_battery_0.json
 84ee7b12399471481929694ba05053bf090a7070 assets\poweredtools\models\item\damage_shield_core.json
-31098ea3386cac470fdbcfa5db8e5b841933c818 assets\poweredtools\models\item\water_shield_core.json
 474c917cf04e4136ee7a40be930ff04e51bf7d72 assets\poweredtools\models\item\broken_battery_3.json
+31098ea3386cac470fdbcfa5db8e5b841933c818 assets\poweredtools\models\item\water_shield_core.json
 1d512ccaabe7dccd7d73068b769e0d14a55c360f assets\poweredtools\models\item\uncanned_battery_4.json
 69b3cdd3f499edbf5b34ea1d67e81fcf1d257c0b assets\poweredtools\models\item\impure_lithium.json
 aa5f38a4221bd74d77d7fd3c37e179654787f974 assets\poweredtools\models\item\battery_4.json
@@ -34,8 +34,8 @@ f9ad86d3c851f1f646a35c4fb7e6938b2c50fc75 assets\poweredtools\models\item\broken_
 817bb889c5113311486da6a079e09a83e44bf8a2 assets\poweredtools\models\item\battery_0.json
 b43382208904d81dcf75264e44b6e283ca7351e3 assets\poweredtools\models\item\battery_5.json
 235e9be18773856aaf319e6f4b12c141039f0692 assets\poweredtools\models\item\uncanned_battery_5.json
-c1cd9ec92625a4ea57e12aaa4ccb4d912e7970ba assets\poweredtools\models\item\powered_ingot.json
 4ea58f5248f3af4be539ca80230c01d22b3beaa1 assets\poweredtools\models\item\battery_2.json
+c1cd9ec92625a4ea57e12aaa4ccb4d912e7970ba assets\poweredtools\models\item\powered_ingot.json
 b1e2896cb1477f047cdf6ee9381ebfd49b364b73 assets\poweredtools\models\item\uncanned_battery_2.json
 ceb475296aeb9ff32062546140ee18e5fcc4caf2 assets\poweredtools\models\item\steel_ingot.json
 0e89ea9aa3d81eebfddceba90a5eaee370060de8 assets\poweredtools\blockstates\coal_generator.json
